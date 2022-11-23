@@ -1,0 +1,3 @@
+{% if first is True %}{% if ordered is True %}<ol>{% else %}<ul>{% endif %}{% endif %}
+<li>{{ text|safe }}</li>
+{% if last is True %}{% if ordered is True %}</ol>{% else %}</ul>{% endif %}{% endif %}

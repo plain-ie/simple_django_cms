@@ -1,0 +1,34 @@
+{% extends 'simple_django_cms/platform/admin/base.html' %}
+{% load simple_django_cms_tags %}
+
+{% block content %}
+
+    {% constant 'URLNAME_ADMIN_LIST_ITEMS' as URLNAME_ADMIN_LIST_ITEMS %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h1>
+                    {{ page.title|capfirst }}
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <ul>
+                    {% for result in pagination.results %}
+                        <li>
+                            <a href="{% url URLNAME_ADMIN_LIST_ITEMS id=result.id %}">
+                                {{ result.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

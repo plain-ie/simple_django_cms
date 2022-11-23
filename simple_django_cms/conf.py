@@ -1,0 +1,176 @@
+from django.conf import settings as dj_settings
+
+from .apps import SimpleDjangoCmsConfig
+from .loader import load
+
+
+class Settings:
+
+    _CONTENT_TYPE_REGISTRY = None
+    _MARKDOWN_WIDGET_REGISTRY = None
+    _TRANSLATION_REGISTRY = None
+
+    APP_NAME = SimpleDjangoCmsConfig.name
+
+    # --
+
+    @property
+    def ENABLE_ADMIN_SITE(self):
+        return getattr(
+            dj_settings,
+            'ENABLE_ADMIN_SITE',
+            True
+        )
+
+    @property
+    def ENABLE_API(self):
+        return getattr(
+            dj_settings,
+            'ENABLE_API',
+            True
+        )
+
+    @property
+    def ENABLE_SITE(self):
+        return getattr(
+            dj_settings,
+            'ENABLE_SITE',
+            True
+        )
+
+    # --
+
+    @property
+    def CONTENT_TYPE_LIST(self):
+        root = f'{self.APP_NAME}.content_types'
+        return getattr(
+            dj_settings,
+            'CONTENT_TYPE_LIST',
+            [
+                f'{root}.images.content_type.ImageContentType',
+                f'{root}.news.content_type.NewsContentType',
+                f'{root}.redirects.content_type.RedirectContentType',
+            ]
+        )
+
+    @property
+    def CONTENT_TYPE_REGISTRY(self):
+        if self._CONTENT_TYPE_REGISTRY is not None:
+            return self._CONTENT_TYPE_REGISTRY
+        self._CONTENT_TYPE_REGISTRY = load(self.CONTENT_TYPE_REGISTRY_CLASS)()
+        return self._CONTENT_TYPE_REGISTRY
+
+    @property
+    def CONTENT_TYPE_REGISTRY_CLASS(self):
+        return getattr(
+            dj_settings,
+            'CONTENT_TYPE_REGISTRY_CLASS',
+            f'{self.APP_NAME}.content_types.registry.ContentTypeRegistry'
+        )
+
+    # --
+
+    @property
+    def MARKDOWN_WIDGETS_LIST(self):
+        root = f'{self.APP_NAME}.markdown.widgets'
+        return getattr(
+            dj_settings,
+            'MARKDOWN_WIDGETS_LIST',
+            [
+                f'{root}.HeadingH1',
+                f'{root}.HeadingH2',
+                f'{root}.HeadingH3',
+                f'{root}.HeadingH4',
+                f'{root}.HorizontalRule',
+                f'{root}.Image',
+                f'{root}.UnorderedListElement',
+                f'{root}.OrderedListElement',
+                f'{root}.Paragraph',
+            ]
+        )
+
+    @property
+    def MARKDOWN_WIDGETS_LIST_EXTENSION(self):
+        return getattr(
+            dj_settings,
+            'MARKDOWN_WIDGETS_LIST_EXTENSION',
+            [],
+        )
+
+    @property
+    def MARKDOWN_WIDGET_REGISTRY(self):
+        if self._MARKDOWN_WIDGET_REGISTRY is not None:
+            return self._MARKDOWN_WIDGET_REGISTRY
+        self._MARKDOWN_WIDGET_REGISTRY = load(
+            self.MARKDOWN_WIDGET_REGISTRY_CLASS)()
+        return self._MARKDOWN_WIDGET_REGISTRY
+
+    @property
+    def MARKDOWN_WIDGET_REGISTRY_CLASS(self):
+        return getattr(
+            dj_settings,
+            'MARKDOWN_WIDGET_REGISTRY_CLASS'
+            f'{self.APP_NAME}.markdown.registry.MarkdownWidgetRegistry',
+        )
+
+    # --
+
+    @property
+    def TRANSLATION_REGISTRY_CLASS(self):
+        return getattr(
+            dj_settings,
+            'TRANSLATION_REGISTRY_CLASS',
+            f'{self.APP_NAME}.translate.registry.TransaltionRegistry'
+        )
+
+    @property
+    def TRANSLATION_REGISTRY(self):
+        if self._TRANSLATION_REGISTRY is not None:
+            return self._TRANSLATION_REGISTRY
+        self._TRANSLATION_REGISTRY = load(self.TRANSLATION_REGISTRY_CLASS)()
+        return self._TRANSLATION_REGISTRY
+
+    # --
+
+    @property
+    def TEMPLATE_FORGOT_PASSWORD(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_FORGOT_PASSWORD',
+            f'{self.APP_NAME}/platform/admin/pages/forgot_password.html'
+        )
+
+    @property
+    def TEMPLATE_PROJECTS_LIST(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_PROJECTS_LIST',
+            f'{self.APP_NAME}/platform/admin/pages/projects_list.html'
+        )
+
+    @property
+    def TEMPLATE_REGISTER(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_REGISTER',
+            f'{self.APP_NAME}/platform/admin/pages/register.html'
+        )
+
+    @property
+    def TEMPLATE_RESET_PASSWORD(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_RESET_PASSWORD',
+            f'{self.APP_NAME}/platform/admin/pages/reset_password.html'
+        )
+
+    @property
+    def TEMPLATE_SIGNIN(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_SIGNIN',
+            f'{self.APP_NAME}/platform/admin/pages/signin.html'
+        )
+
+
+settings = Settings()

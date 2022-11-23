@@ -1,0 +1,32 @@
+{% load simple_django_cms_menu_tags %}
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block extra_meta %}{% endblock %}
+        <title>{{ page.title }}</title>
+        <link rel="stylesheet" href="{% static '/simple_django_cms/bootstrap/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static '/simple_django_cms/admin/css/main.css' %}">
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="{% static '/simple_django_cms/html5shim/html5shiv-3.7.3.min.js' %}"></script>
+        <script src="{% static '/simple_django_cms/respondjs/respond-1.4.2.min.js' %}"></script>
+        <![endif]-->
+        {% block extra_head %}{% endblock %}
+        {% block extra_css %}{% endblock %}
+    </head>
+    <body>
+        {% main_menu %}
+        {% block content %}{% endblock %}
+        {% footer %}
+        <script src="{% static '/simple_django_cms/jquery/jquery-1.12.4.min.js' %}"></script>
+        <script src="{% static '/simple_django_cms/bootstrap/js/bootstrap.min.js' %}"></script>
+        <script src="{% static '/simple_django_cms/admin/js/main.js' %}"></script>
+        {% block extra_js %}{% endblock %}
+    </body>
+</html>
