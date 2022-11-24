@@ -15,6 +15,24 @@ class Settings:
     # --
 
     @property
+    def DEFAULT_LANGUAGE(self):
+        return getattr(
+            dj_settings,
+            'DEFAULT_LANGUAGE',
+            'en'
+        )
+
+    @property
+    def LANGUAGES(self):
+        return getattr(
+            dj_settings,
+            'LANGUAGES',
+            []
+        )
+
+    # --
+
+    @property
     def ENABLE_ADMIN_SITE(self):
         return getattr(
             dj_settings,
@@ -149,6 +167,14 @@ class Settings:
         )
 
     @property
+    def TEMPLATE_PROJECT_ITEMS_LIST(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_PROJECTS_LIST',
+            f'{self.APP_NAME}/platform/admin/pages/project_items_list.html'
+        )
+
+    @property
     def TEMPLATE_REGISTER(self):
         return getattr(
             dj_settings,
@@ -170,6 +196,14 @@ class Settings:
             dj_settings,
             'TEMPLATE_SIGNIN',
             f'{self.APP_NAME}/platform/admin/pages/signin.html'
+        )
+
+    @property
+    def TEMPLATE_CREATE_ITEM_SELECT_TENANT(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_SIGNIN',
+            f'{self.APP_NAME}/platform/admin/pages/item_create_select_tenant.html'
         )
 
 

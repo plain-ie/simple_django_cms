@@ -10,6 +10,9 @@ class BaseViewSet(View):
         return {
             'page': {
                 'title': self.page_title,
+            },
+            'view': {
+                'kwargs': self.kwargs
             }
         }
 

@@ -1,4 +1,6 @@
 URLNAME_ADMIN_CREATE_ITEMS = 'create_item'
+URLNAME_ADMIN_CREATE_ITEMS_SELECT_TENANT = 'create_item_select_tenant'
+URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE = 'create_item_select_content_type'
 URLNAME_ADMIN_DELETE_ITEMS = 'delete_item'
 URLNAME_ADMIN_LIST_ITEMS = 'list_items'
 URLNAME_ADMIN_LIST_PROJECTS = 'list_projects'

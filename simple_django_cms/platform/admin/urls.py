@@ -10,6 +10,8 @@ from .viewsets.auth_signin import SignInViewSet
 from .viewsets.auth_signout import SignOutViewSet
 
 from .viewsets.items_create import ItemsCreateViewSet
+from .viewsets.items_create_select_tenant import ItemsCreateSelectTenantViewSet
+from .viewsets.items_create_select_content_type import ItemsCreateSelectContentTypeViewSet
 from .viewsets.items_delete import ItemsDeleteViewSet
 from .viewsets.items_list import ItemsListViewSet
 from .viewsets.items_retrieve import ItemsRetrieveViewSet
@@ -19,25 +21,33 @@ from .viewsets.projects_list import ProjectsListViewSet
 
 urlpatterns = [
 
-    # --
-
     path(
-        'projects/<str:project_id>/tenants/<str:tenant_id>/create/<str:content_type>/',
+        'projects/<str:project_id>/create-item/tenants/<str:tenant_id>/content-type/<str:content_type>/',
         ItemsCreateViewSet.as_view(),
         name=constants.URLNAME_ADMIN_CREATE_ITEMS
     ),
     path(
-        'projects/<str:project_id>/tenants/<str:tenant_id>/delete/<str:item_id>/',
+        'projects/<str:project_id>/create-item/tenants/<str:tenant_id>/',
+        ItemsCreateSelectContentTypeViewSet.as_view(),
+        name=constants.URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE
+    ),
+    path(
+        'projects/<str:project_id>/create-item/tenants/',
+        ItemsCreateSelectTenantViewSet.as_view(),
+        name=constants.URLNAME_ADMIN_CREATE_ITEMS_SELECT_TENANT
+    ),
+    path(
+        'projects/<str:project_id>/tenants/<str:tenant_id>/items/<str:item_id>/delete/',
         ItemsDeleteViewSet.as_view(),
         name=constants.URLNAME_ADMIN_DELETE_ITEMS
     ),
     path(
-        'projects/<str:project_id>/tenants/<str:tenant_id>/retrieve/<str:item_id>/',
+        'projects/<str:project_id>/tenants/<str:tenant_id>/items/<str:item_id>/',
         ItemsRetrieveViewSet.as_view(),
         name=constants.URLNAME_ADMIN_RETRIEVE_ITEMS
     ),
     path(
-        'projects/<str:project_id>/list/',
+        'projects/<str:project_id>/items/',
         ItemsListViewSet.as_view(),
         name=constants.URLNAME_ADMIN_LIST_ITEMS
     ),

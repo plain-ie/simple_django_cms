@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from django.core.cache import cache
@@ -5,7 +6,10 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models
 from django.db.models import Q
+from django.shortcuts import reverse
+from django.utils.text import slugify
 
+from . import constants
 from .conf import settings
 from . import managers
 
@@ -19,39 +23,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = managers.CustomUserManager()
-
-    def available_projects(self):
-
-        queryset = Project.objects.all().order_by('name')
-
-        if self.is_superuser is True:
-            return queryset
-
-        condition = Q()
-        condition.add(Q(users__user_id=self.id), Q.OR)
-        condition.add(Q(tenants__tenant__users__user_id=self.id), Q.OR)
-
-        queryset = queryset.filter(
-            condition
-        ).prefetch_related(
-            'users',
-            'tenants__tenant__users',
-        )
-
-        return queryset
-
-    def is_project_admin(self, project_id):
-        return ProjectAdmin.objects.filter(
-            project_id=project_id,
-            user_id=self.id
-        ).exists()
-
-    def is_project_tenant_user(self, project_id, tenant_id):
-        return TenantUser.objects.filter(
-            tenant__projects__id=project_id,
-            tenant_id=tenant_id,
-            user_id=self.id
-        ).exists()
 
     def save(self, *args, **kwargs):
         creation = getattr(self, 'id', None) is None
@@ -68,6 +39,19 @@ class Project(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def get_admin_items_url(self):
+        return reverse(
+            constants.URLNAME_ADMIN_LIST_ITEMS,
+            kwargs={
+                'project_id': str(self.id)
+            }
+        )
+
+    def get_admin_url(self):
+        return self.get_admin_items_url()
 
     def __str__(self):
         return self.name
@@ -142,10 +126,58 @@ class Item(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     data = models.JSONField(default=dict, blank=True, null=True)
     content_type = models.CharField(max_length=255, db_index=True)
+    #
     project = models.ForeignKey('Project', related_name='items', on_delete=models.CASCADE)
     tenant = models.ForeignKey('Tenant', related_name='items', on_delete=models.CASCADE, blank=True, null=True)
+    #
+    published = models.BooleanField(default=False)
+    archived = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
+    #
+    first_published_at = models.DateTimeField(blank=True, null=True)
+    published_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.__state_published = self.published
+
+    # def save(self, *args, **kwargs):
+    #
+    #     if self.published is True and self.__state_published is False:
+    #
+    #         now = datetime.datetime.now(datetime.timezone.utc)
+    #
+    #         if self.first_published_at is None:
+    #             self.first_published_at = now
+    #
+    #         self.published_at = now
+    #
+    #     super().save(*args, **kwargs)
+
+
+class TranslatableContent(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    data = models.JSONField(default=dict, blank=True, null=True)
+    item = models.ForeignKey('Item', related_name='translatable_contents', on_delete=models.CASCADE)
+    language = models.CharField(max_length=255, db_index=True, choices=settings.LANGUAGES)
+    title = models.CharField(max_length=4096)
+    slug = models.SlugField(max_length=4096, unique=True)
+    content = models.TextField(default='')
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.__state_title = self.title
+    #     self.__state_slug = self.slug
+
+    # def get_item_uuid_part(self):
+    #     return str(self.item.id)
+
+    # def save(self, *args, **kwargs):
+    #     is_creation = getattr(self, 'id', None) is None
+    #     super().save(*args, **kwargs)
 
 
 class ItemRelation(models.Model):

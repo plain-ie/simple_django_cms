@@ -12,6 +12,7 @@ class UserAdmin(UserAdmin):
     model = models.User
 
     list_display = (
+        'id',
         'first_name',
         'last_name',
         'email',
@@ -100,9 +101,29 @@ class TenancyAdmin(admin.ModelAdmin):
     list_display = ['project', 'tenant']
 
 
+class ItemRelationInline(admin.StackedInline):
+    model = models.ItemRelation
+    fk_name = 'child'
+    raw_id_fields = ['parent', 'child']
+    extra = 0
+
+
+class TranslatableContentInline(admin.StackedInline):
+    model = models.TranslatableContent
+    fk_name = 'item'
+    raw_id_fields = ['item']
+    extra = 0
+
+
+class ItemAdmin(admin.ModelAdmin):
+   raw_id_fields = ['project', 'tenant']
+   inlines = [TranslatableContentInline, ItemRelationInline]
+
+
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Project)
 admin.site.register(models.ProjectAdmin, ProjectAdminAdmin)
 admin.site.register(models.Tenancy, TenancyAdmin)
 admin.site.register(models.Tenant, TenantAdmin)
 admin.site.register(models.TenantUser, TenantUserAdmin)
+admin.site.register(models.Item, ItemAdmin)

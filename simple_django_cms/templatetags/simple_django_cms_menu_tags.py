@@ -1,5 +1,7 @@
 from django import template
+from django.shortcuts import reverse
 
+from .. import constants
 from ..conf import settings
 
 
@@ -25,6 +27,23 @@ def main_menu(context):
 
     request = context['request']
     links = []
+
+    if getattr(request.user, 'is_authenticated', False) is False:
+        links.append({
+            'text': 'Sign in',
+            'href': reverse(constants.URLNAME_AUTH_SIGNIN)
+        })
+
+    else:
+        links.append({
+            'text': request.user.email,
+            'children': [
+                {
+                    'text': 'Sign out',
+                    'href': reverse(constants.URLNAME_AUTH_SIGNOUT)
+                }
+            ]
+        })
 
     return {
         'brand_logo_url': None,

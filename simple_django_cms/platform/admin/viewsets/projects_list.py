@@ -1,8 +1,8 @@
 import math
 
 from .... import constants
+from ....clients.internal.projects import ProjectQuerySetClient
 from ....conf import settings
-from ....models import Project
 
 from ..permissions.access_mixins import AuthenticatedUserRequiredMixin
 
@@ -18,42 +18,32 @@ class ProjectsListViewSet(AuthenticatedUserRequiredMixin, BaseViewSet):
 
     def get(self, request):
 
-        # Super user can see page if only 1 project exists
-        # Everyone else is redirected to project page
+        # context = self.get_context()
+        #
+        # if context['results']['total'] == 1:
+        #     first = context['results']['results'][0]
+        #     return self._redirect(first.get_admin_items_url())
 
-        context = self.get_context()
-
-        if context['pagination']['total'] == 1:
-            if request.user.is_superuser is False:
-                self._redirect(
-                    self._reverse(
-                        constants.URLNAME_ADMIN_LIST_ITEMS,
-                        kwargs={
-                            'project_id': context['pagination']['results'][0].id
-                        }
-                    )
-                )
-
-        return self._render(request, self.template, context=context)
+        return self._render(request, self.template, context=self.get_context())
 
     def get_context(self):
 
-        context = super().get_context()
-
+        #
+        user_id = self.request.user.id
         page = int(self.request.GET.get(self.page_query_string, '1'))
+        keyword = self.request.GET.get('keyword', None)
 
-        projects = self.request.user.available_projects()
+        #
+        results = ProjectQuerySetClient().get_projects(
+            user_id,
+            page=page,
+            limit=self.page_limit,
+            name=keyword
+        )
 
-        total = projects.count()
+        #
+        context = super().get_context()
+        context['results'] = results
 
-        skip_from = ((page - 1) * self.page_limit)
-        skip_to = skip_from + self.page_limit
-
-        context['pagination'] = {
-            'results': projects[skip_from:skip_to],
-            'pages': math.ceil(total / self.page_limit),
-            'page': page,
-            'total': total,
-        }
-
+        #
         return context

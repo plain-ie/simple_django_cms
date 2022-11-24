@@ -3,6 +3,9 @@
 
 {% block content %}
 
+    {% constant 'URLNAME_ADMIN_LIST_ITEMS' as URLNAME_ADMIN_LIST_ITEMS %}
+    {% constant 'URLNAME_ADMIN_CREATE_ITEMS_SELECT_TENANT' as URLNAME_ADMIN_CREATE_ITEMS_SELECT_TENANT %}
+
     <div class="container-fluid simple-django-cms-jumboheader margin-bottom-lg">
         <div class="row">
             <div class="container">
@@ -18,7 +21,9 @@
                         <div class="row margin-bottom-lg hidden-lg hidden-md hidden-sm"></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        &nbsp;
+                        <ul class="text-right">
+                            <li><a href="{% url URLNAME_ADMIN_CREATE_ITEMS_SELECT_TENANT project_id=view.kwargs.project_id %}">Create new</a></li>
+                        </ul>
                     </div>
                 </div>
                 <div class="row">
@@ -28,6 +33,40 @@
                             <div class="form-group">
                                 <label for="filter_keyword">Keyword</label>
                                 <input type="text" name="q" id="filter_keyword" class="form-control input-lg" value="{{ request.GET.q|default:'' }}" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label for="filter_content_type">Content type</label>
+                                <select name="content_type" id="filter_content_type" class="form-control input-lg">
+                                    <option value="">All</option>
+                                    {% for choice in choices.content_types %}
+                                        <option value="{{ choice.0 }}" {% if choice.0 in request.GET.item_type %}selected{% endif %}>{{ choice.1|capfirst }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label for="filter_tenant">Tenant</label>
+                                <select name="tenant" id="filter_tenant" class="form-control input-lg">
+                                    <option value="">All</option>
+                                    {% for choice in choices.tenants %}
+                                        <option value="{{ choice.0 }}" {% if choice.0 in request.GET.tenants %}selected{% endif %}>{{ choice.1|capfirst }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label for="filter_statuses">Status</label>
+                                <select name="status" id="filter_statuses" class="form-control input-lg">
+                                    <option value="">None</option>
+                                    {% for choice in choices.statuses %}
+                                        <option value="{{ choice.0 }}" {% if choice.0 in request.GET.statuses %}selected{% endif %}>{{ choice.1|capfirst }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
 
@@ -53,8 +92,8 @@
                 <ul class="simple-django-cms-list">
                     {% for result in results.results %}
                         <li>
-                            <a href="{{ result.get_admin_url }}">{{ result.name }}</a><br />
-                            <small>Created at: {{ result.created_at|date:'d/m/Y' }}</small>
+                            <a href="{{ result.display_data.url }}">{{ result.display_data.title }}</a><br />
+                            <small>{{ result.display_data.content_type|capfirst }}; {{ result.display_data.tenant }}; {{ result.display_data.created_at|date:'d/m/Y H:i' }}</small>
                         </li>
                     {% empty %}
                         <li>

@@ -3,6 +3,8 @@
 
 {% block content %}
 
+    {% constant 'URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE' as URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE %}
+
     <div class="container-fluid simple-django-cms-jumboheader margin-bottom-lg">
         <div class="row">
             <div class="container">
@@ -53,8 +55,7 @@
                 <ul class="simple-django-cms-list">
                     {% for result in results.results %}
                         <li>
-                            <a href="{{ result.get_admin_url }}">{{ result.name }}</a><br />
-                            <small>Created at: {{ result.created_at|date:'d/m/Y' }}</small>
+                            <a href="{% url URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE project_id=view.kwargs.project_id tenant_id=result.0 %}">{{ result.1 }}</a>
                         </li>
                     {% empty %}
                         <li>
