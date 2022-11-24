@@ -11,9 +11,10 @@ from .base import BaseViewSet
 
 class ProjectsListViewSet(AuthenticatedUserRequiredMixin, BaseViewSet):
 
-    page_limit = 10
+    page_limit = settings.PROJECTS_LIMIT
     page_query_string = 'page'
     page_title = 'Projects'
+    paginate = True
     template = settings.TEMPLATE_PROJECTS_LIST
 
     def get(self, request):
@@ -38,6 +39,7 @@ class ProjectsListViewSet(AuthenticatedUserRequiredMixin, BaseViewSet):
             user_id,
             page=page,
             limit=self.page_limit,
+            paginate=self.paginate,
             name=keyword
         )
 

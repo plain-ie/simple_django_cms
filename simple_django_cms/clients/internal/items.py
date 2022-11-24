@@ -40,17 +40,17 @@ class ItemQuerySetClient:
                 tenant__users__user=user
             )
 
-        if content_type is not None:
+        if content_type not in [None, '', ' ']:
             queryset = queryset.filter(
                 content_type=content_type
             )
 
-        if tenant is not None:
+        if tenant not in [None, '', ' ']:
             queryset = queryset.filter(
                 tenant_id=tenant
             )
 
-        if keyword is not None:
+        if keyword not in [None, '', ' ']:
             queryset = queryset.filter(
                 translatable_contents__title__icontains=keyword
             )

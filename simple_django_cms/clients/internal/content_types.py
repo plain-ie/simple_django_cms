@@ -9,13 +9,19 @@ class ContentTypeQuerySetClient:
         self,
         project_id,
         user_id,
+        keyword=None,
         page=1,
         limit=0,
         paginate=False,
         format='choices'
     ):
 
+        content_types = None
+        if keyword is not None:
+            content_types = [keyword, ]
+
         queryset = settings.CONTENT_TYPE_REGISTRY.get_content_types(
+            content_types=content_types,
             format='choices'
         )
 

@@ -48,7 +48,7 @@ def main_menu(context):
     return {
         'brand_logo_url': None,
         'brand_url': '/',
-        'brand_title': 'XXX',
+        'brand_title': settings.PROJECT_TITLE,
         'links': links,
         'request': request,
     }

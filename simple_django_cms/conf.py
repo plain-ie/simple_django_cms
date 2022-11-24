@@ -12,6 +12,17 @@ class Settings:
 
     APP_NAME = SimpleDjangoCmsConfig.name
 
+
+    # --
+
+    @property
+    def PROJECT_TITLE(self):
+        return getattr(
+            dj_settings,
+            'PROJECT_TITLE',
+            'Simple Django CMS'
+        )
+
     # --
 
     @property
@@ -204,6 +215,40 @@ class Settings:
             dj_settings,
             'TEMPLATE_SIGNIN',
             f'{self.APP_NAME}/platform/admin/pages/item_create_select_tenant.html'
+        )
+
+    @property
+    def TEMPLATE_CREATE_ITEM_SELECT_CONTENT_TYPE(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_SIGNIN',
+            f'{self.APP_NAME}/platform/admin/pages/item_create_select_content_type.html'
+        )
+
+    # --
+
+    @property
+    def ITEMS_LIMIT(self):
+        return getattr(
+            dj_settings,
+            'ITEMS_LIMIT',
+            10
+        )
+
+    @property
+    def TENANTS_LIMIT(self):
+        return getattr(
+            dj_settings,
+            'TENANTS_LIMIT',
+            10000
+        )
+
+    @property
+    def PROJECTS_LIMIT(self):
+        return getattr(
+            dj_settings,
+            'PROJECTS_LIMIT',
+            10000
         )
 
 

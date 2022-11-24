@@ -4,47 +4,55 @@
 {% block content %}
 
     {% constant 'URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE' as URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE %}
+    {% constant 'URLNAME_ADMIN_LIST_ITEMS' as URLNAME_ADMIN_LIST_ITEMS %}
 
     <div class="container-fluid simple-django-cms-jumboheader margin-bottom-lg">
         <div class="row">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                        <h1>
-                            {{ page.title|capfirst }}
-                            {% if page.subtitle|default:None is not None %}
-                                <br />
-                                <small>{{ page.subtitle|capfirst }}</small>
-                            {% endif %}
-                        </h1>
+                        {% include 'simple_django_cms/platform/admin/components/headings/h1.html' with title=page.title subtitle=page.subtitle %}
                         <div class="row margin-bottom-lg hidden-lg hidden-md hidden-sm"></div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        &nbsp;
+                        <ul class="text-right">
+                            <li>
+                                <a href="{% url URLNAME_ADMIN_LIST_ITEMS project_id=view.kwargs.project_id %}">Browse items</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div class="row">
                     <form action="{{ request.path }}" method="GET">
-
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label for="filter_keyword">Keyword</label>
                                 <input type="text" name="q" id="filter_keyword" class="form-control input-lg" value="{{ request.GET.q|default:'' }}" />
                             </div>
                         </div>
-
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <a href="{{ request.path }}" class="btn btn-lg btn-danger pull-right">Clear filters</a>
                                 <button class="btn btn-success btn-lg">Filter</button>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    {% if messages %}
+        <div class="container margin-bottom-sm">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 margin-bottom-md">
+                    {% for message in messages %}
+                        {% include 'simple_django_cms/platform/admin/components/alerts/alert.html' with tag=message.tags message=message %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     <div class="container margin-bottom-lg">
         <div class="row">
@@ -65,29 +73,7 @@
                 </ul>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="row">
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                        {% if results.page > 1 %}
-                            <a href="#" role="button">
-                                <span class="glyphicon glyphicon-chevron-left"></span>
-                                <span class="sr-only">Previous</span>
-                                <span class="hidden-xs" aria-hidden>Previous</span>
-                            </a>
-                        {% endif %}
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-center">
-                        {{ results.page }} / {{ results.pages }}
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 text-right">
-                        {% if results.page > results.pages %}
-                            <a href="#" role="button">
-                                <span class="sr-only">Next</span>
-                                <span class="hidden-xs" aria-hidden>Next</span>
-                                <span class="glyphicon glyphicon-chevron-right"></span>
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
+                {% include 'simple_django_cms/platform/admin/components/pagination.html' with page=results.page pages=results.pages next_url=results.next_url previous_url=results.previous_url %}
             </div>
         </div>
     </div>

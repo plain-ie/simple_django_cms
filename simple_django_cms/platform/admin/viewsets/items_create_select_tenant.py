@@ -1,15 +1,18 @@
+from django.contrib import messages
+
 from .base import BaseViewSet
 
+from ....clients.internal.projects import ProjectQuerySetClient
 from ....clients.internal.tenants import TenantQuerySetClient
 from ....conf import settings
 
 
 class ItemsCreateSelectTenantViewSet(BaseViewSet):
 
-    page_limit = 10
+    page_limit = settings.TENANTS_LIMIT
     page_query_string = 'page'
     keyword_query_string = 'q'
-    paginate = False
+    paginate = True
     page_title = 'Item creation'
     page_subtitle = 'Select tenant'
     template = settings.TEMPLATE_CREATE_ITEM_SELECT_TENANT
@@ -27,7 +30,15 @@ class ItemsCreateSelectTenantViewSet(BaseViewSet):
 
         #
 
+        project_client = ProjectQuerySetClient()
         tenant_client = TenantQuerySetClient()
+
+        project = project_client.get_project(project_id)
+
+        messages.success(
+            self.request,
+            f'Creating item for project: "{project.name}"'
+        )
 
         #
 

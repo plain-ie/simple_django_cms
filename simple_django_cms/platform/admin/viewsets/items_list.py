@@ -11,14 +11,14 @@ from ..permissions.access_mixins import ProjectAccessRequiredMixin
 
 class ItemsListViewSet(ProjectAccessRequiredMixin, BaseViewSet):
 
-    page_limit = 10
+    page_limit = settings.ITEMS_LIMIT
     page_query_string = 'page'
     keyword_query_string = 'q'
     tenant_query_string = 'tenant'
     status_query_string = 'status'
     content_type_query_string = 'content_type'
     page_title = 'Browse items'
-    paginate=True
+    paginate = True
     template = settings.TEMPLATE_PROJECT_ITEMS_LIST
 
     def get(self, request, project_id):
@@ -28,12 +28,13 @@ class ItemsListViewSet(ProjectAccessRequiredMixin, BaseViewSet):
 
         user_id = self.request.user.id
         project_id = self.kwargs['project_id']
+        request_data = self.request.GET
 
-        page = int(self.request.GET.get(self.page_query_string, '1'))
-        keyword = self.request.GET.get(self.keyword_query_string, None)
-        tenant = self.request.GET.get(self.tenant_query_string, None)
-        status = self.request.GET.get(self.status_query_string, None)
-        content_type = self.request.GET.get(self.content_type_query_string, None)
+        page = int(request_data.get(self.page_query_string, '1'))
+        keyword = request_data.get(self.keyword_query_string, None)
+        tenant = request_data.get(self.tenant_query_string, None)
+        status = request_data.get(self.status_query_string, None)
+        content_type = request_data.get(self.content_type_query_string, None)
 
         #
 
@@ -77,7 +78,7 @@ class ItemsListViewSet(ProjectAccessRequiredMixin, BaseViewSet):
             user_id,
             page=page,
             keyword=keyword,
-            paginate=paginate,
+            paginate=self.paginate,
             content_type=content_type,
             tenant=tenant,
             status=status,
