@@ -127,27 +127,12 @@ class Item(models.Model):
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     #
+    deleted_at = models.DateTimeField(blank=True, null=True)
+    archived_at = models.DateTimeField(blank=True, null=True)
     first_published_at = models.DateTimeField(blank=True, null=True)
     published_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.__state_published = self.published
-
-    # def save(self, *args, **kwargs):
-    #
-    #     if self.published is True and self.__state_published is False:
-    #
-    #         now = datetime.datetime.now(datetime.timezone.utc)
-    #
-    #         if self.first_published_at is None:
-    #             self.first_published_at = now
-    #
-    #         self.published_at = now
-    #
-    #     super().save(*args, **kwargs)
 
 
 class TranslatableContent(models.Model):
@@ -158,18 +143,6 @@ class TranslatableContent(models.Model):
     title = models.CharField(max_length=4096)
     slug = models.SlugField(max_length=4096, unique=True)
     content = models.TextField(default='')
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.__state_title = self.title
-    #     self.__state_slug = self.slug
-
-    # def get_item_uuid_part(self):
-    #     return str(self.item.id)
-
-    # def save(self, *args, **kwargs):
-    #     is_creation = getattr(self, 'id', None) is None
-    #     super().save(*args, **kwargs)
 
 
 class ItemRelation(models.Model):

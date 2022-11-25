@@ -1,0 +1,20 @@
+{% load simple_django_cms_tags %}
+
+<div class="form-group">
+    <label for="{{ FIELD.id_for_label  }}">{{ FIELD.label }}{% if FIELD.field.required is True %} <span class="required">*</span>{% endif %}</label>
+    {{ FIELD.errors }}
+    {% if FIELD.field.disabled is True %}
+        {{ FIELD|extend_field_css_classes:'form-control input-lg'|override_field_attr:'disabled|true' }}
+    {% else %}
+        {% if FIELD.field.required is True %}
+            {{ FIELD|extend_field_css_classes:'form-control input-lg'|override_field_attr:'required|' }}
+        {% else %}
+            {{ FIELD|extend_field_css_classes:'form-control input-lg' }}
+        {% endif %}
+    {% endif %}
+    {% if FIELD.help_text %}
+        <p class="help-block">
+            {{ FIELD.help_text|safe }}
+        </p>
+    {% endif %}
+</div>

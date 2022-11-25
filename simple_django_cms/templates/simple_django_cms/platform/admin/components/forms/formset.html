@@ -1,0 +1,4 @@
+{{ FORMSET.management_form }}
+{% for form in FORMSET %}
+    {% include 'simple_django_cms/platform/admin/components/forms/form.html' with FORM=form %}
+{% endfor %}

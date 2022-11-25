@@ -1,0 +1,17 @@
+{% load simple_django_cms_tags %}
+
+<div>
+
+    {% if translatable_contents_form is not None %}
+        {% include 'simple_django_cms/platform/admin/components/forms/tabbed_content_formset.html' with FORMSET=translatable_contents_form %}
+    {% endif %}
+
+    {% if relations_form is not None %}
+        {% include 'simple_django_cms/platform/admin/components/forms/relation_formset.html' with FORMSET=relations_form %}
+    {% endif %}
+
+    {% if item_form is not None %}
+        {% include 'simple_django_cms/platform/admin/components/forms/form.html' with FORM=item_form %}
+    {% endif %}
+
+</div>

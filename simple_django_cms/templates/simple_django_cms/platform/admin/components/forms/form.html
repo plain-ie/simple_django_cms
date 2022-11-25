@@ -1,0 +1,7 @@
+{{ FORM.non_field_errors }}
+{% for field in FORM.hidden_fields %}
+    {{ field }}
+{% endfor %}
+{% for field in FORM.visible_fields %}
+    {% include 'simple_django_cms/platform/admin/components/forms/field.html' with FIELD=field %}
+{% endfor %}

@@ -1,5 +1,7 @@
 from django.contrib import messages
 
+from .... import constants
+
 from ....clients.internal.content_types import ContentTypeQuerySetClient
 from ....clients.internal.projects import ProjectQuerySetClient
 from ....clients.internal.tenants import TenantQuerySetClient
@@ -23,12 +25,37 @@ class ItemsCreateViewSet(
         return self._render(request, self.template, context=self.get_context())
 
     def post(self, request, project_id, content_type):
-        # Create
-        return self._redirect()
+
+        content_type_client = ContentTypeQuerySetClient()
+        _ct = content_type_client.get_content_type(content_type)
+
+        #
+
+        try:
+            item = _ct.create(project_id, tenant_id, request.user, request.POST)
+        except Exception:
+            return self._render(request, self.template, context=self.get_context())
+
+        #
+
+        messages.success(
+            request,
+            'Item created successfully'
+        )
+
+        redirect_to = self._reverse(
+            constants.URLNAME_ADMIN_RETRIEVE_ITEMS,
+            kwargs={
+                'project_id': project_id,
+                'tenant_id': tenant_id,
+                'item_id': item.id
+            }
+        )
+
+        return self._redirect(redirect_to)
 
     def get_context(self):
 
-        # user_id = self.request.user.id
         tenant_id = self.kwargs['tenant_id']
         project_id = self.kwargs['project_id']
         content_type = self.kwargs['content_type']
@@ -44,7 +71,14 @@ class ItemsCreateViewSet(
         _tenant = tenant_client.get_tenant(tenant_id)
         _ct = content_type_client.get_content_type(content_type)
 
-        form = _ct.get_rendered_form(language=language)
+        form = _ct.get_rendered_form(
+            initial_data={
+                'translatable_contents': [{
+                    'language': settings.DEFAULT_LANGUAGE
+                }]
+            },
+            language=language
+        )
 
         #
 
@@ -52,12 +86,12 @@ class ItemsCreateViewSet(
         msg += f'for project "{_project.name}" '
         msg += f'tenant "{_tenant.name}"'
 
-        messages.success(self.request, msg)
+        messages.info(self.request, msg)
 
         #
 
         context = super().get_context()
-        context['page']['subtitle'] = content_type
+        context['page']['subtitle'] = _ct.get_content_type(language)
         context['form'] = form
 
         return context

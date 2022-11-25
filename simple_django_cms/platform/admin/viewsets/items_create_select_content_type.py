@@ -43,7 +43,7 @@ class ItemsCreateSelectContentTypeViewSet(
         project = project_client.get_project(project_id)
         tenant = tenant_client.get_tenant(tenant_id)
 
-        messages.success(
+        messages.info(
             self.request,
             f'Creating item for project "{project.name}" tenant "{tenant.name}"'
         )

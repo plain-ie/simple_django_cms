@@ -1,5 +1,5 @@
-from django.forms.models import model_to_dict
 from django.shortcuts import reverse
+from django.template.loader import render_to_string
 
 from .. import constants
 from ..conf import settings
@@ -9,9 +9,16 @@ from ..models import Item, ItemRelation, TranslatableContent
 class BaseContentType:
 
     browsable = False
+    #
     name = 'base'
     display_name_plural = 'base'
     display_name_singular = 'base'
+    #
+    form_template = 'simple_django_cms/platform/admin/forms/content_type.html'
+    #
+    item_form = None
+    translatable_contents_form = None
+    relations_form = None
 
     # --
 
@@ -20,7 +27,7 @@ class BaseContentType:
 
     # --
 
-    def get_edit_url(self, object):        
+    def get_edit_url(self, object):
         return reverse(
             constants.URLNAME_ADMIN_RETRIEVE_ITEMS,
             kwargs={
@@ -78,14 +85,87 @@ class BaseContentType:
 
     # --
 
-    def get_rendered_form(
+    def get_translatable_contents_form(
         self,
         data=None,
-        inital_data=None,
+        initial_data=None,
         language=settings.DEFAULT_LANGUAGE
     ):
 
-        return 'HELLO WORLD'
+        if self.translatable_contents_form is None:
+            return None
+
+        _initial_data = initial_data.get('translatable_contents', [])
+
+        return self.translatable_contents_form(data, initial=_initial_data)
+
+    def get_relations_form(
+        self,
+        data=None,
+        initial_data=None,
+        language=settings.DEFAULT_LANGUAGE
+    ):
+
+        if self.relations_form is None:
+            return None
+
+        _initial_data = initial_data.get('relations', [])
+
+        return self.relations_form(data, initial=_initial_data)
+
+    def get_item_form(
+        self,
+        data=None,
+        initial_data=None,
+        language=settings.DEFAULT_LANGUAGE
+    ):
+
+        if self.item_form is None:
+            return None
+
+        return self.item_form(data)
+
+    def get_rendered_form(
+        self,
+        data=None,
+        initial_data=None,
+        language=settings.DEFAULT_LANGUAGE
+    ):
+
+        translatable_contents_form = self.get_translatable_contents_form(
+            data=data,
+            initial_data=initial_data,
+            language=language
+        )
+
+        relations_form = self.get_relations_form(
+            data=data,
+            initial_data=initial_data,
+            language=language
+        )
+
+        item_form = self.get_item_form(
+            data=data,
+            initial_data=initial_data,
+            language=language
+        )
+
+        html = render_to_string(
+            self.form_template,
+            context={
+                'errors': [],
+                'translatable_contents_form': translatable_contents_form,
+                'relations_form': relations_form,
+                'item_form': item_form,
+            }
+        )
+
+        return html
+
+    # --
+
+    def data_is_valid(self):
+        return False
 
     # --
 
@@ -111,3 +191,17 @@ class BaseContentType:
         }
 
         return data
+
+    # --
+
+    def create(self, data, **kwargs):
+        raise NotImplemented()
+
+    def update(self, object, data, **kwargs):
+        raise NotImplemented()
+
+    def partial_update(self, object, data, **kwargs):
+        raise NotImplemented()
+
+    def delete(self, object, **kwargs):
+        raise NotImplemented()

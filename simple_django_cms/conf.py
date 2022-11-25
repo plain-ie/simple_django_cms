@@ -75,6 +75,7 @@ class Settings:
             dj_settings,
             'CONTENT_TYPE_LIST',
             [
+                f'{root}.flat_pages.content_type.FlatPageContentType',
                 f'{root}.images.content_type.ImageContentType',
                 f'{root}.news.content_type.NewsContentType',
                 f'{root}.redirects.content_type.RedirectContentType',

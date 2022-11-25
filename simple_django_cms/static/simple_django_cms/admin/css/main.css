@@ -57,8 +57,8 @@ form .form-group ul.errorlist li { color: #D43F3A; padding-bottom: 10px; font-we
 .alert { border-radius: 0px; padding: 25px;  }
 .alert a { color: #000000; text-decoration: underline; }
 .alert-danger { background-color: #d43f3a; border-color: #d43f3a; color: #000000; }
-.alert-info { background-color: #337AB7; border-color: #337AB7; color: #000000; }
-.alert-success { background-color: #5CB85C; border-color: #5CB85C; color: #000000; }
+.alert-info { background-color: #337AB7; border-color: #337AB7; color: #FFFFFF; }
+.alert-success { background-color: #5CB85C; border-color: #5CB85C; color: #FFFFFF; }
 .alert-warning { background-color: #f0AD4E; border-color: #f0AD4E; color: #000000; }
 
 

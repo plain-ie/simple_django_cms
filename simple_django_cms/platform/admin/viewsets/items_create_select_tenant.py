@@ -40,7 +40,7 @@ class ItemsCreateSelectTenantViewSet(
 
         project = project_client.get_project(project_id)
 
-        messages.success(
+        messages.info(
             self.request,
             f'Creating item for project "{project.name}"'
         )

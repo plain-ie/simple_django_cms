@@ -1,0 +1,70 @@
+{% load simple_django_cms_tags %}
+
+{% setting 'LANGUAGES' as LANGUAGES %}
+
+<div class="iamheadless-publisher-admin-formset-languages">
+
+    <div class="iamheadless-publisher-admin-formset-management-form">
+        {{ FORMSET.management_form }}
+    </div>
+
+    <div class="iamheadless-publisher-admin-formset-empty-tab" style="display: none;">
+        <li role="presentation">
+            <a href="#__prefix__-content-formset" aria-controls="__prefix__-content-formset" role="tab" data-toggle="tab">language</a>
+        </li>
+    </div>
+
+    <div class="iamheadless-publisher-admin-formset-empty-form" style="display: none;">
+        <div role="tabpanel" class="tab-pane" id="__prefix__-content-formset"">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <a href="#" class="iamheadless-publisher-admin-formset-trigger-remove-form btn btn-md btn-danger pull-right">
+                        Remove language
+                    </a>
+                </div>
+            </div>
+            {% include 'simple_django_cms/platform/admin/components/forms/form.html' with FORM=FORMSET.empty_form %}
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs margin-bottom-md" role="tablist">
+        {% for form in FORMSET %}
+            <li role="presentation" {% if forloop.first is True %}class="active"{% endif %}>
+                <a href="#{{ forloop.counter0 }}-content-formset" aria-controls="{{ forloop.counter0 }}-content-formset" role="tab" data-toggle="tab">
+                    {{ form.language.value|upper }}
+                </a>
+            </li>
+        {% endfor %}
+        {% if LANGUAGES|length > 1 %}
+            {% if LANGUAGES|length == 2 %}
+                <li role="presentation" class="dropdown pull-right">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        Add language <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" class="iamheadless-publisher-admin-formset-trigger-add-form" data-language-code="{{ LANGUAGES.1.0 }}">{{ LANGUAGES.1.1 }}</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+        {% endif %}
+    </ul>
+    <div class="tab-content">
+        {% for form in FORMSET %}
+            <div role="tabpanel" class="iamheadless-publisher-admin-formset-form tab-pane {% if forloop.first is True %}active{% endif %}" id="{{ forloop.counter0 }}-content-formset">
+                {% if forloop.first is False %}
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <a href="#" class="iamheadless-publisher-admin-formset-trigger-remove-form btn btn-md btn-danger pull-right">
+                                Remove language
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                {% include 'simple_django_cms/platform/admin/components/forms/form.html' with FORM=form %}
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
