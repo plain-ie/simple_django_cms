@@ -86,7 +86,8 @@ class ItemsListViewSet(ProjectAccessRequiredMixin, BaseViewSet):
         )
 
         items['results'] = settings.CONTENT_TYPE_REGISTRY.serialize(
-            items['results']
+            items['results'],
+            language=settings.DEFAULT_LANGUAGE
         )
 
         #

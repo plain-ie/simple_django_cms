@@ -5,6 +5,9 @@ from ...conf import settings
 
 class ContentTypeQuerySetClient:
 
+    def get_content_type(self, content_type):
+        return settings.CONTENT_TYPE_REGISTRY.find(content_type)
+
     def get_content_types(
         self,
         project_id,

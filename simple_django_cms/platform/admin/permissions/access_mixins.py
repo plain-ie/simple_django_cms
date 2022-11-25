@@ -13,6 +13,26 @@ class AuthenticatedUserRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
+class ProjectTenantAccessRequiredMixin(AccessMixin):
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.user.is_authenticated is False:
+            return self.handle_no_permission()
+
+        user_client = UserQuerySetClient()
+        has_access = user_client.user_has_tenant_access(
+            kwargs['project_id'],
+            kwargs['tenant_id'],
+            request.user.id
+        )
+
+        if has_access is True:
+            return super().dispatch(request, *args, **kwargs)
+
+        return self.handle_no_permission()
+
+
 class ProjectAccessRequiredMixin(AccessMixin):
 
     def dispatch(self, request, *args, **kwargs):

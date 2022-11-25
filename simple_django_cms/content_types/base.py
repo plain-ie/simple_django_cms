@@ -1,53 +1,9 @@
-from typing import List, Optional
-
 from django.forms.models import model_to_dict
 from django.shortcuts import reverse
 
-from djantic import ModelSchema
-
 from .. import constants
+from ..conf import settings
 from ..models import Item, ItemRelation, TranslatableContent
-
-
-class ItemRelationSchema(ModelSchema):
-
-    class Config:
-        exclude = [
-            'child',
-        ]
-        model = ItemRelation
-
-
-class TranslatableContentSchema(ModelSchema):
-
-    class Config:
-        exclude = [
-            'item',
-        ]
-        model = TranslatableContent
-
-
-class ItemSchema(ModelSchema):
-
-    translatable_contents: List[TranslatableContentSchema]
-
-    class Config:
-        exclude = [
-            'project',
-            'tenant',
-            'children',
-        ]
-        model = Item
-
-
-class BaseSerializer:
-
-    def __init__(self, object):
-        self.object = object
-        self.data = self.get_data(self.object)
-
-    def get_data(self, object):
-        return ItemSchema.from_orm(object).dict()
 
 
 class BaseContentType:
@@ -56,9 +12,15 @@ class BaseContentType:
     name = 'base'
     display_name_plural = 'base'
     display_name_singular = 'base'
-    serializer = BaseSerializer
 
-    def get_admin_url(self, object):
+    # --
+
+    def matches(self, object):
+        return object.content_type == self.name
+
+    # --
+
+    def get_edit_url(self, object):        
         return reverse(
             constants.URLNAME_ADMIN_RETRIEVE_ITEMS,
             kwargs={
@@ -68,17 +30,82 @@ class BaseContentType:
             }
         )
 
-    def matches(self, object):
-        return object.content_type == self.name
+    def get_site_url(self, object, translatable_content):
+        return '#'
 
-    def serialize(self, object, **kwargs):
+    # --
 
-        data = self.serializer(object).data
+    def get_title(
+        self,
+        object,
+        translatable_content
+    ):
+
+        return translatable_content.title
+
+    def get_content_type(
+        self,
+        language=settings.DEFAULT_LANGUAGE
+    ):
+
+        return self.display_name_singular
+
+    # --
+
+    def get_display_content(
+        self,
+        translatable_contents,
+        requested_language,
+        default_language=settings.DEFAULT_LANGUAGE
+    ):
+
+        requested_content = None
+        default_content = None
+
+        for translatable_content in translatable_contents:
+            if translatable_content.language == requested_language:
+                requested_content = translatable_content
+            if translatable_content.language == default_language:
+                default_content = translatable_content
+
+        if requested_language == default_language:
+            return default_content
+
+        if requested_content is not None:
+            return requested_content
+
+        return default_content
+
+    # --
+
+    def get_rendered_form(
+        self,
+        data=None,
+        inital_data=None,
+        language=settings.DEFAULT_LANGUAGE
+    ):
+
+        return 'HELLO WORLD'
+
+    # --
+
+    def serialize(
+        self,
+        object,
+        language=settings.DEFAULT_LANGUAGE,
+    ):
+
+        translatable_content = self.display_content(
+            object.translatable_contents.all(),
+            language,
+            default_language=settings.DEFAULT_LANGUAGE
+        )
 
         data['display_data'] = {
-            'title': 'XXX :)',
-            'admin_url': self.get_admin_url(object),
-            'content_type': self.display_name_singular,
+            'title': self.get_site_url(translatable_content),
+            'edit_url': self.get_edit_url(object),
+            'url': self.get_site_url(object, translatable_content),
+            'content_type': self.get_content_type(language),
             'tenant': object.tenant.name,
             'created_at': object.created_at
         }

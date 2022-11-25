@@ -16,7 +16,6 @@ from . import managers
 
 class User(AbstractUser):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
 
     USERNAME_FIELD = 'email'
@@ -37,7 +36,6 @@ class User(AbstractUser):
 
 class Project(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -69,7 +67,6 @@ class ProjectAdmin(models.Model):
 
     ACL_CHOICE_DEFAULT = str(ACL_CHOICES_ADMIN[0])
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey('Project', related_name='users', on_delete=models.CASCADE)
     user = models.ForeignKey('User', related_name='projects', on_delete=models.CASCADE)
     acl = models.CharField(max_length=255, choices=ACL_CHOICES, default=ACL_CHOICE_DEFAULT)
@@ -79,7 +76,6 @@ class ProjectAdmin(models.Model):
 
 class Tenant(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, blank=True, null=True)
     parent = models.ForeignKey('Tenant', related_name='children', on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -101,7 +97,6 @@ class TenantUser(models.Model):
 
     ACL_CHOICE_DEFAULT = str(ACL_CHOICES_USER[0])
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tenant = models.ForeignKey('Tenant', related_name='users', on_delete=models.CASCADE)
     user = models.ForeignKey('User', related_name='tenants', on_delete=models.CASCADE)
     acl = models.CharField(max_length=255, choices=ACL_CHOICES, default=ACL_CHOICE_DEFAULT)
@@ -114,7 +109,6 @@ class Tenancy(models.Model):
     class Meta:
         unique_together = ('project', 'tenant')
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey('Project', related_name='tenants', on_delete=models.CASCADE)
     tenant = models.ForeignKey('Tenant', related_name='projects', on_delete=models.CASCADE)
 
@@ -123,7 +117,6 @@ class Tenancy(models.Model):
 
 class Item(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     data = models.JSONField(default=dict, blank=True, null=True)
     content_type = models.CharField(max_length=255, db_index=True)
     #
@@ -159,7 +152,6 @@ class Item(models.Model):
 
 class TranslatableContent(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     data = models.JSONField(default=dict, blank=True, null=True)
     item = models.ForeignKey('Item', related_name='translatable_contents', on_delete=models.CASCADE)
     language = models.CharField(max_length=255, db_index=True, choices=settings.LANGUAGES)
@@ -182,7 +174,6 @@ class TranslatableContent(models.Model):
 
 class ItemRelation(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     child = models.ForeignKey('Item', related_name='parents', on_delete=models.CASCADE)
     parent = models.ForeignKey('Item', related_name='children', on_delete=models.CASCADE)
     status = models.CharField(max_length=255, db_index=True)

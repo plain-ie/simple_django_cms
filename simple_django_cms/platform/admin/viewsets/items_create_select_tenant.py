@@ -1,13 +1,18 @@
 from django.contrib import messages
 
-from .base import BaseViewSet
-
 from ....clients.internal.projects import ProjectQuerySetClient
 from ....clients.internal.tenants import TenantQuerySetClient
 from ....conf import settings
 
+from ..permissions.access_mixins import ProjectAccessRequiredMixin
 
-class ItemsCreateSelectTenantViewSet(BaseViewSet):
+from .base import BaseViewSet
+
+
+class ItemsCreateSelectTenantViewSet(
+    ProjectAccessRequiredMixin,
+    BaseViewSet
+):
 
     page_limit = settings.TENANTS_LIMIT
     page_query_string = 'page'
@@ -37,7 +42,7 @@ class ItemsCreateSelectTenantViewSet(BaseViewSet):
 
         messages.success(
             self.request,
-            f'Creating item for project: "{project.name}"'
+            f'Creating item for project "{project.name}"'
         )
 
         #

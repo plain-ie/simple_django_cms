@@ -12,7 +12,6 @@ class Settings:
 
     APP_NAME = SimpleDjangoCmsConfig.name
 
-
     # --
 
     @property
@@ -210,10 +209,18 @@ class Settings:
         )
 
     @property
+    def TEMPLATE_CREATE_ITEM(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_CREATE_ITEM',
+            f'{self.APP_NAME}/platform/admin/pages/item_create.html'
+        )
+
+    @property
     def TEMPLATE_CREATE_ITEM_SELECT_TENANT(self):
         return getattr(
             dj_settings,
-            'TEMPLATE_SIGNIN',
+            'TEMPLATE_CREATE_ITEM_SELECT_TENANT',
             f'{self.APP_NAME}/platform/admin/pages/item_create_select_tenant.html'
         )
 
@@ -221,7 +228,7 @@ class Settings:
     def TEMPLATE_CREATE_ITEM_SELECT_CONTENT_TYPE(self):
         return getattr(
             dj_settings,
-            'TEMPLATE_SIGNIN',
+            'TEMPLATE_CREATE_ITEM_SELECT_CONTENT_TYPE',
             f'{self.APP_NAME}/platform/admin/pages/item_create_select_content_type.html'
         )
 

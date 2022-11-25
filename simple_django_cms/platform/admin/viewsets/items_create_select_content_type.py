@@ -1,14 +1,19 @@
 from django.contrib import messages
 
-from .base import BaseViewSet
-
 from ....clients.internal.content_types import ContentTypeQuerySetClient
 from ....clients.internal.projects import ProjectQuerySetClient
 from ....clients.internal.tenants import TenantQuerySetClient
 from ....conf import settings
 
+from ..permissions.access_mixins import ProjectTenantAccessRequiredMixin
 
-class ItemsCreateSelectContentTypeViewSet(BaseViewSet):
+from .base import BaseViewSet
+
+
+class ItemsCreateSelectContentTypeViewSet(
+    ProjectTenantAccessRequiredMixin,
+    BaseViewSet
+):
 
     page_limit = settings.ITEMS_LIMIT
     page_query_string = 'page'

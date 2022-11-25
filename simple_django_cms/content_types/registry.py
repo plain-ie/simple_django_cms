@@ -57,7 +57,11 @@ class ContentTypeRegistry:
 
         return _content_types
 
-    def serialize(self, objects):
+    def serialize(
+        self,
+        objects,
+        language=settings.DEFAULT_LANGUAGE
+    ):
 
         data = []
 
@@ -65,6 +69,11 @@ class ContentTypeRegistry:
             for key in self.content_types.keys():
                 content_type = self.content_types[key]
                 if content_type.matches(object) is True:
-                    data.append(content_type.serialize(object))
+                    data.append(
+                        content_type.serialize(
+                            object,
+                            language=language
+                        )
+                    )
 
         return data
