@@ -3,15 +3,21 @@
 <div>
 
     {% if translatable_contents_form is not None %}
+        <h2 class="margin-bottom-lg">Translatable content</h2>
         {% include 'simple_django_cms/platform/admin/components/forms/tabbed_content_formset.html' with FORMSET=translatable_contents_form %}
+        <div class="row margin-bottom-md"></div>
     {% endif %}
 
     {% if relations_form is not None %}
+        <h2 class="margin-bottom-lg">Relations</h2>
         {% include 'simple_django_cms/platform/admin/components/forms/relation_formset.html' with FORMSET=relations_form %}
+        <div class="row margin-bottom-md"></div>
     {% endif %}
 
     {% if item_form is not None %}
+        <h2 class="margin-bottom-lg">Item data</h2>
         {% include 'simple_django_cms/platform/admin/components/forms/form.html' with FORM=item_form %}
+        <div class="row margin-bottom-lg"></div>
     {% endif %}
 
 </div>

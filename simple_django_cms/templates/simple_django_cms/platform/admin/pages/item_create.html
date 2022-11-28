@@ -59,35 +59,14 @@
 
 {% block extra_js %}
 
-    <script src="{% static 'simple_django_cms/admin/js/formset_app_languages.js' %}"></script>
-    <script src="{% static 'simple_django_cms/admin/js/formset_app_relations.js' %}"></script>
-    <script src="{% static 'simple_django_cms/admin/js/formset_app.js' %}"></script>
-    <script src="{% static 'simple_django_cms/admin/js/languages.js' %}"></script>
+    {% setting 'LANGUAGES' as LANGUAGES %}
+
+    {{ LANGUAGES|json_script:"languages" }}
 
     <script>
-
-        {% setting 'DEFAULT_LANGUAGE' as DEFAULT_LANGUAGE %}
-        {% setting 'LANGUAGES' as LANGUAGES %}
-        {% setting 'URLNAME_READABILITY_TEXT_ANALYZE' as URLNAME_READABILITY_TEXT_ANALYZE %}
-
-        var DEFAULT_LANGUAGE = '{{ DEFAULT_LANGUAGE.0 }}';
-        var LANGUAGES = [{% for x in LANGUAGES %}['{{x.0}}', '{{ x.1}}'],{% endfor %}];
-
-        // var IAMHEADLESS_READABILITY_FORM_FIELD_SCORE_CLASS_NAME = '';
-        var IAMHEADLESS_READABILITY_URL = '#';
-        var IAMHEADLESS_READABILITY_FORM_FIELD_SCORE_TEXT = 'Reading score';
-
-        $(document).ready(function(){
-
-            window.language_formset_after_detect_formset_function = function(form_element){
-                new DetectReadableFormFields();
-                new DetectFormSlugFields();
-            };
-
-            new IamheadlessPublisherAdminFormsetController(IamheadlessPublisherAdminLanguageFormset, '.iamheadless-publisher-admin-formset-languages');
-            new IamheadlessPublisherAdminFormsetController(IamheadlessPublisherAdminRelationFormset, '.iamheadless-publisher-admin-formset-relations');
-        });
-
+        var LANGUAGES = JSON.parse($('#languages').first().text())
     </script>
+    
+    <script src="{% static 'simple_django_cms/admin/js/item_forms.js' %}"></script>
 
 {% endblock %}

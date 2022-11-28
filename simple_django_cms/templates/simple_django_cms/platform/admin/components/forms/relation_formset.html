@@ -6,9 +6,9 @@
 
 {% translate 'XXX' as XXX %}
 
-<div class="iamheadless-publisher-admin-formset-relations" data-relation-direction="{{ DIRECTION }}" data-relation-status="{{ STATUS }}" data-relation-choices-url="{{ CHOICES_URL }}">
+<div class="formset-relations" data-relation-direction="{{ DIRECTION }}" data-relation-status="{{ STATUS }}" data-relation-choices-url="{{ CHOICES_URL }}">
 
-    <div class="iamheadless-publisher-admin-formset-empty-form" style="display: none;">
+    <div class="formset-empty-form" style="display: none;">
         {{ FORMSET.empty_form }}
         <div class="form-group">
             <div class="row">
@@ -16,7 +16,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control input-lg" value="replace" disabled>
                         <span class="input-group-btn">
-                            <a class="btn btn-default btn-lg iamheadless-publisher-admin-formset-trigger-remove-form" type="button">
+                            <a class="btn btn-default btn-lg formset-trigger-remove-form" type="button">
                                 <span class="glyphicon glyphicon-trash"></span>
                                 <span class="sr-only">Remove</span>
                             </a>
@@ -27,18 +27,18 @@
         </div>
     </div>
 
-    <div class="iamheadless-publisher-admin-formset-management-form">
+    <div class="formset-management-form">
         {{ FORMSET.management_form }}
     </div>
 
-    <div class="form-group iamheadless-publisher-admin-formset-choices">
+    <div class="form-group formset-choices">
         <div class="row">
 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 iamheadless-publisher-admin-formset-choices-empty-choice" style="display: none;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 formset-choices-empty-choice" style="display: none;">
                 <div class="input-group">
                     <input type="text" class="form-control input-lg" value="" disabled>
                     <span class="input-group-btn">
-                        <a href="#" class="btn btn-default btn-lg iamheadless-publisher-admin-formset-trigger-add-form" type="button">
+                        <a href="#" class="btn btn-default btn-lg formset-trigger-add-form" type="button">
                             <span class="glyphicon glyphicon-plus"></span>
                             <span class="sr-only">Add</span>
                         </a>
@@ -47,7 +47,7 @@
             </div>
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <input type="text" class="form-control input-lg iamheadless-publisher-admin-formset-choices-search-trigger" placeholder="Enter keyword">
+                <input type="text" class="form-control input-lg formset-choices-search-trigger" placeholder="Enter keyword">
             </div>
 
         </div>

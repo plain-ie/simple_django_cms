@@ -182,7 +182,7 @@ class Settings:
         return getattr(
             dj_settings,
             'TEMPLATE_PROJECTS_LIST',
-            f'{self.APP_NAME}/platform/admin/pages/project_items_list.html'
+            f'{self.APP_NAME}/platform/admin/pages/item_list.html'
         )
 
     @property
