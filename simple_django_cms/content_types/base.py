@@ -1,7 +1,9 @@
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
+from django.utils.text import slugify
 
 from .. import constants
+from ..clients.internal.items import ItemQuerySetClient
 from ..conf import settings
 from ..models import Item, ItemRelation, TranslatableContent
 
@@ -17,7 +19,9 @@ class BaseContentType:
     form_template = 'simple_django_cms/platform/admin/forms/content_type.html'
     #
     item_form = None
+    item_data_form = None
     translatable_contents_form = None
+    translatable_contents_data_form = None
     relations_form = None
 
     # --
@@ -88,84 +92,136 @@ class BaseContentType:
     def get_translatable_contents_form(
         self,
         data=None,
-        initial_data=None,
+        initial=[],
         language=settings.DEFAULT_LANGUAGE
     ):
 
         if self.translatable_contents_form is None:
             return None
 
-        _initial_data = initial_data.get('translatable_contents', [])
-
-        return self.translatable_contents_form(data, initial=_initial_data)
+        return self.translatable_contents_form(data, initial=initial)
 
     def get_relations_form(
         self,
         data=None,
-        initial_data=None,
+        initial=[],
         language=settings.DEFAULT_LANGUAGE
     ):
 
         if self.relations_form is None:
             return None
 
-        _initial_data = initial_data.get('relations', [])
-
-        return self.relations_form(data, initial=_initial_data)
+        return self.relations_form(data, initial=initial)
 
     def get_item_form(
         self,
         data=None,
-        initial_data=None,
+        initial={},
         language=settings.DEFAULT_LANGUAGE
     ):
 
         if self.item_form is None:
             return None
 
-        return self.item_form(data)
+        return self.item_form(data, initial=initial)
+
+    def get_item_data_form(
+        self,
+        data=None,
+        initial={},
+        language=settings.DEFAULT_LANGUAGE
+    ):
+
+        if self.item_data_form is None:
+            return None
+
+        return self.item_data_form(data, initial=initial)
 
     def get_rendered_form(
         self,
         data=None,
-        initial_data=None,
-        language=settings.DEFAULT_LANGUAGE
+        initial={},
+        language=settings.DEFAULT_LANGUAGE,
+        validate=False,
+        render_html=True,
     ):
+
+        is_valid = True
+        errors = {
+            'translatable_contents_form': [],
+            'translatable_contents_data_form': [],
+            'relations_form': [],
+            'item_form': [],
+            'item_data_form': [],
+        }
 
         translatable_contents_form = self.get_translatable_contents_form(
             data=data,
-            initial_data=initial_data,
+            initial=initial.get('translatable_contents', []),
             language=language
         )
 
         relations_form = self.get_relations_form(
             data=data,
-            initial_data=initial_data,
+            initial=initial.get('relations', []),
             language=language
         )
 
         item_form = self.get_item_form(
             data=data,
-            initial_data=initial_data,
+            initial=initial,
             language=language
         )
 
+        item_data_form = self.get_item_data_form(
+            data=data,
+            initial=initial.get('data', {}),
+            language=language
+        )
+
+        if validate is True:
+
+            if translatable_contents_form is not None:
+                for form in translatable_contents_form.forms:
+                    if form.is_valid() is False:
+                        is_valid = False
+                        errors['translatable_contents_form'].append(form.errors)
+
+            if relations_form is not None:
+                for form in relations_form.forms:
+                    if form.is_valid() is False:
+                        is_valid = False
+                        errors['relations_form'].append(form.errors)
+
+            if item_form is not None:
+                if item_form.is_valid() is False:
+                    is_valid = False
+                    errors['item_form'] = item_form.errors
+
+            if item_data_form is not None:
+                if item_data_form.is_valid() is False:
+                    is_valid = False
+                    errors['item_data_form'] = item_data_form.errors
+
+
+        context = {
+            'errors': errors,
+            'is_valid': is_valid,
+            'translatable_contents_form': translatable_contents_form,
+            'relations_form': relations_form,
+            'item_form': item_form,
+            'item_data_form': item_data_form,
+        }
+
+        if render_html is False:
+            return context
+
         html = render_to_string(
             self.form_template,
-            context={
-                'errors': [],
-                'translatable_contents_form': translatable_contents_form,
-                'relations_form': relations_form,
-                'item_form': item_form,
-            }
+            context=context
         )
 
         return html
-
-    # --
-
-    def data_is_valid(self):
-        return False
 
     # --
 
@@ -194,8 +250,36 @@ class BaseContentType:
 
     # --
 
-    def create(self, data, **kwargs):
-        raise NotImplemented()
+    def create_slug(self, translatable_content):
+        return slugify(translatable_content['title'])
+
+    # --
+
+    def create(
+        self,
+        project_id=None,
+        tenant_id=None,
+        user_id=None,
+        validated_data=None,
+    ):
+
+        item = validated_data['item']
+        item['data'] = validated_data['item_data']
+
+        translatable_contents = validated_data['translatable_contents']
+        for translatable_content in translatable_contents:
+            translatable_content['slug'] = self.create_slug(translatable_content)
+
+        item = ItemQuerySetClient().create(
+            project_id=project_id,
+            tenant_id=tenant_id,
+            user_id=user_id,
+            item_data=item,
+            translatable_contents_data=validated_data['translatable_contents'],
+            relations_data=validated_data['relations']
+        )
+
+        return item
 
     def update(self, object, data, **kwargs):
         raise NotImplemented()

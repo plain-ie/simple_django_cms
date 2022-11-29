@@ -1,11 +1,14 @@
 import math
 
-from ...models import Item
+from ...models import Item, TranslatableContent
 
 from .users import UserQuerySetClient
 
 
 class ItemQuerySetClient:
+
+    def get_item(self, item_id):
+        return Item.objects.get(id=item_id)
 
     def get_items(
         self,
@@ -80,3 +83,21 @@ class ItemQuerySetClient:
             'pages': pages,
             'total': total
         }
+
+    def create(
+        self,
+        project_id,
+        tenant_id,
+        user_id,
+        item_data,
+        translatable_contents_data=[],
+        relations_data=[],
+    ):
+
+        item = Item.objects.create(**item_data)
+
+        for translatable_content in translatable_contents_data:
+            translatable_content['item_id'] = item.id
+            TranslatableContent.objects.create(**translatable_content)
+
+        return item

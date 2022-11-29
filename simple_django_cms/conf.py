@@ -218,6 +218,14 @@ class Settings:
         )
 
     @property
+    def TEMPLATE_CREATE_RETRIEVE(self):
+        return getattr(
+            dj_settings,
+            'TEMPLATE_CREATE_RETRIEVE',
+            f'{self.APP_NAME}/platform/admin/pages/item_retrieve.html'
+        )
+
+    @property
     def TEMPLATE_CREATE_ITEM_SELECT_TENANT(self):
         return getattr(
             dj_settings,

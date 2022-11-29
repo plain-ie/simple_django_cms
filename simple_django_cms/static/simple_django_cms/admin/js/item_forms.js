@@ -14,6 +14,10 @@ function EmptyTranslatableContentForm(parent){
         var inner_html = form.html().replaceAll('__prefix__', index)
         form.html(inner_html)
 
+        var language_input = form.find(
+            'input[name=form-' + index + '-language]'
+        ).first().val(language);
+
         form.find(self.parent.remove_trigger_selector).each(function(){
             $(this).click(function(event){
                 self.parent.remove(language, index);
@@ -26,7 +30,9 @@ function EmptyTranslatableContentForm(parent){
     //
     this.detect = function(){
         var self = this;
-        self.object = self.parent.object.find(self.selector).first();
+        object = self.parent.object.find(self.selector).first();
+        self.object = object.clone();
+        object.remove();
     };
 };
 
