@@ -117,32 +117,17 @@ class Tenancy(models.Model):
 
 class Item(models.Model):
 
-    data = models.JSONField(default=dict, blank=True, null=True)
+    data = models.JSONField(default=dict)
     content_type = models.CharField(max_length=255, db_index=True)
     #
     project = models.ForeignKey('Project', related_name='items', on_delete=models.CASCADE)
     tenant = models.ForeignKey('Tenant', related_name='items', on_delete=models.CASCADE, blank=True, null=True)
     #
     published = models.BooleanField(default=False)
-    archived = models.BooleanField(default=False)
-    deleted = models.BooleanField(default=False)
-    #
-    deleted_at = models.DateTimeField(blank=True, null=True)
-    archived_at = models.DateTimeField(blank=True, null=True)
-    first_published_at = models.DateTimeField(blank=True, null=True)
     published_at = models.DateTimeField(blank=True, null=True)
+    #
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-class TranslatableContent(models.Model):
-
-    data = models.JSONField(default=dict, blank=True, null=True)
-    item = models.ForeignKey('Item', related_name='translatable_contents', on_delete=models.CASCADE)
-    language = models.CharField(max_length=255, db_index=True, choices=settings.LANGUAGES)
-    title = models.CharField(max_length=4096)
-    slug = models.SlugField(max_length=4096, unique=True)
-    content = models.TextField(default='')
 
 
 class ItemRelation(models.Model):

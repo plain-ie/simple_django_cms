@@ -1,4 +1,4 @@
-from ..base import BaseContentType
+from ..content_type import BaseContentType
 
 
 class ImageContentType(BaseContentType):

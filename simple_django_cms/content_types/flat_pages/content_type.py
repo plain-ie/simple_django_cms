@@ -1,9 +1,4 @@
-from .forms import (
-    FlatPageItemForm,
-    FlatPageTranslatableContenFormSet,
-)
-
-from ..base import BaseContentType
+from ..content_type import BaseContentType
 
 
 class FlatPageContentType(BaseContentType):
@@ -12,7 +7,3 @@ class FlatPageContentType(BaseContentType):
     display_name_plural = 'flat pages'
     display_name_singular = 'flat page'
     name = 'flat_pages'
-
-    item_form = FlatPageItemForm
-    translatable_contents_form = FlatPageTranslatableContenFormSet
-    relations_form = None

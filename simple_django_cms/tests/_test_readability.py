@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from . import fleish
+from ..readability.analyzer import reading_score
+
 
 class ReadabilityTestCase(TestCase):
 
@@ -12,7 +13,7 @@ class ReadabilityTestCase(TestCase):
             text += test_text
 
         score = 69
-        calculated_score = round(fleish.reading_score(text), 0)
+        calculated_score = round(reading_score(text), 0)
         self.assertEquals(score, calculated_score)
 
     def test_two(self):
@@ -23,7 +24,7 @@ class ReadabilityTestCase(TestCase):
             text += test_text
 
         score = 37.5
-        calculated_score = round(fleish.reading_score(text), 1)
+        calculated_score = round(reading_score(text), 1)
         self.assertEquals(score, calculated_score)
 
     def test_three(self):
@@ -34,5 +35,5 @@ class ReadabilityTestCase(TestCase):
             text += test_text
 
         score = 116
-        calculated_score = round(fleish.reading_score(text), 0)
+        calculated_score = round(reading_score(text), 0)
         self.assertEquals(score, calculated_score)

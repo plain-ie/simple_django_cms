@@ -49,9 +49,41 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <form action="{{ request.path }}" method="POST">
                     {% csrf_token %}
-                    {{ form }}
+
+                    <div>
+
+                        <!-- CONTENT -->
+                        {% if forms.translatable_contents is not None %}
+                            <h2 class="margin-bottom-lg">Translatable content</h2>
+                            {% include 'simple_django_cms/platform/admin/components/forms/tabbed_content_formset.html' with FORMSET=forms.translatable_contents %}
+                            <div class="row margin-bottom-md"></div>
+                        {% endif %}
+
+                        <!-- RELATIONS -->
+                        {% if forms.relations is not None %}
+                            <h2 class="margin-bottom-lg">Relations</h2>
+                            {% include 'simple_django_cms/platform/admin/components/forms/relation_formset.html' with FORMSET=forms.relations %}
+                            <div class="row margin-bottom-md"></div>
+                        {% endif %}
+
+                        <!-- ITEM DATA -->
+                        {% if forms.item_data is not None %}
+                            <h2 class="margin-bottom-lg">Item content</h2>
+                            {% include 'simple_django_cms/platform/admin/components/forms/form.html' with FORM=forms.item_data %}
+                            <div class="row margin-bottom-md"></div>
+                        {% endif %}
+
+                        <!-- ITEM -->
+                        {% if forms.item is not None %}
+                            <h2 class="margin-bottom-lg">Metadata</h2>
+                            {% include 'simple_django_cms/platform/admin/components/forms/form.html' with FORM=forms.item %}
+                            <div class="row margin-bottom-md"></div>
+                        {% endif %}
+
+                    </div>
+
                     <div class="form-group">
-                        <button class="btn btn-success btn-lg">Create</button>
+                        <button class="btn btn-success btn-lg">Update</button>
                     </div>
                 </form>
             </div>

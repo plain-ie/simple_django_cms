@@ -108,16 +108,9 @@ class ItemRelationInline(admin.StackedInline):
     extra = 0
 
 
-class TranslatableContentInline(admin.StackedInline):
-    model = models.TranslatableContent
-    fk_name = 'item'
-    raw_id_fields = ['item']
-    extra = 0
-
-
 class ItemAdmin(admin.ModelAdmin):
    raw_id_fields = ['project', 'tenant']
-   inlines = [TranslatableContentInline, ItemRelationInline]
+   inlines = [ItemRelationInline]
 
 
 admin.site.register(models.User, UserAdmin)

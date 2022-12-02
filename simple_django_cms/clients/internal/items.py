@@ -1,6 +1,6 @@
 import math
 
-from ...models import Item, TranslatableContent
+from ...models import Item
 
 from .users import UserQuerySetClient
 
@@ -17,6 +17,7 @@ class ItemQuerySetClient:
         keyword=None,
         tenant=None,
         content_type=None,
+        content_types=None,
         status=None,
         deleted=False,
         page=1,
@@ -29,9 +30,9 @@ class ItemQuerySetClient:
 
         queryset = Item.objects.filter(
             project_id=project_id,
-            deleted=deleted,
+            # deleted=deleted,
         ).prefetch_related(
-            'translatable_contents',
+            # 'translatable_contents',
             'parents__parent',
         ).order_by(
             '-created_at'
@@ -86,18 +87,10 @@ class ItemQuerySetClient:
 
     def create(
         self,
-        project_id,
-        tenant_id,
-        user_id,
         item_data,
-        translatable_contents_data=[],
         relations_data=[],
     ):
 
         item = Item.objects.create(**item_data)
-
-        for translatable_content in translatable_contents_data:
-            translatable_content['item_id'] = item.id
-            TranslatableContent.objects.create(**translatable_content)
 
         return item

@@ -19,12 +19,7 @@ class ContentTypeQuerySetClient:
         format='choices'
     ):
 
-        content_types = None
-        if keyword is not None:
-            content_types = [keyword, ]
-
         queryset = settings.CONTENT_TYPE_REGISTRY.get_content_types(
-            content_types=content_types,
             format='choices'
         )
 

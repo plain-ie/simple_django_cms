@@ -88,8 +88,8 @@
                 <ul class="simple-django-cms-list">
                     {% for result in results.results %}
                         <li>
-                            <a href="{{ result.display_data.url }}">{{ result.display_data.title }}</a><br />
-                            <small>{{ result.display_data.content_type|capfirst }}; {{ result.display_data.tenant }}; {{ result.display_data.created_at|date:'d/m/Y H:i' }}</small>
+                            <a href="{{ result.edit_url }}">{{ result.title }}</a><br />
+                            <small>{{ result.content_type|capfirst }}; {{ result.tenant }}; {{ result.created_at|date:'d/m/Y H:i' }}</small>
                         </li>
                     {% empty %}
                         <li>

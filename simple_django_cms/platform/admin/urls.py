@@ -47,6 +47,11 @@ urlpatterns = [
         name=constants.URLNAME_ADMIN_RETRIEVE_ITEMS
     ),
     path(
+        'projects/<str:project_id>/items/<str:item_id>/',
+        ItemsRetrieveViewSet.as_view(),
+        name=constants.URLNAME_ADMIN_RETRIEVE_ITEMS
+    ),
+    path(
         'projects/<str:project_id>/items/',
         ItemsListViewSet.as_view(),
         name=constants.URLNAME_ADMIN_LIST_ITEMS
