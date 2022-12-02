@@ -9,10 +9,11 @@ from .serializers import ItemSerializer
 class BaseContentType:
 
     browsable = False
-    name = 'base'
     display_name_plural = 'base'
     display_name_singular = 'base'
-    requires_project_admin = True
+    has_tenant = False
+    name = 'base'
+    requires_project_admin = False
     serializer_class = ItemSerializer
     template_admin_create = settings.TEMPLATE_CREATE_ITEM
     template_admin_retrieve = settings.TEMPLATE_RETRIEVE_ITEM

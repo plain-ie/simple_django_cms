@@ -18,7 +18,7 @@ class DisplayDataSerializer(BaseModel):
     edit_url: str
     published: bool
     site_url: str
-    tenant: str
+    tenant: Union[str, None]
     title: str
 
 

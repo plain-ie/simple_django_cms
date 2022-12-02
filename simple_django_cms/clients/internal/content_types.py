@@ -2,6 +2,8 @@ import math
 
 from ...conf import settings
 
+from .users import UserQuerySetClient
+
 
 class ContentTypeQuerySetClient:
 
@@ -19,7 +21,17 @@ class ContentTypeQuerySetClient:
         format='choices'
     ):
 
+        user_is_project_admin = UserQuerySetClient().user_is_project_admin(
+            project_id,
+            user_id
+        )
+
+        requires_project_admin = False
+        if user_is_project_admin is True:
+            requires_project_admin = None
+
         queryset = settings.CONTENT_TYPE_REGISTRY.get_content_types(
+            requires_project_admin=requires_project_admin,
             format='choices'
         )
 

@@ -5,6 +5,7 @@ URLNAME_ADMIN_DELETE_ITEMS = 'delete_item'
 URLNAME_ADMIN_LIST_ITEMS = 'list_items'
 URLNAME_ADMIN_LIST_PROJECTS = 'list_projects'
 URLNAME_ADMIN_RETRIEVE_ITEMS = 'retrieve_item'
+URLNAME_ADMIN_RETRIEVE_PROJECT_ITEMS = 'retrieve_project_item'
 
 URLNAME_AUTH_SIGNIN = 'sign_in'
 URLNAME_AUTH_SIGNOUT = 'sign_out'

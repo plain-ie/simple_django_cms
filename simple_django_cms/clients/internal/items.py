@@ -38,6 +38,11 @@ class ItemQuerySetClient:
             '-created_at'
         )
 
+        if content_types is not None:
+            queryset = queryset.filter(
+                content_type__in=content_types,
+            )
+
         if user_client.user_is_project_admin(project_id, user_id) is False:
             queryset = queryset.filter(
                 tenant__projects__project_id=project_id,

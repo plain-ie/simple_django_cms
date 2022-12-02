@@ -17,14 +17,9 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <ul class="text-right">
-                            <li>
-                                <a href="{% url URLNAME_ADMIN_CREATE_ITEMS project_id=view.kwargs.project_id tenant_id=view.kwargs.tenant_id content_type=item.content_type %}">
-                                    Create new
-                                </a>
-                            </li>
-                            <li><a href="#">Publish</a></li>
-                            <li><a href="#">Archive</a></li>
-                            <li><a href="#">Delete</a></li>
+                            {% for link in manangement_links %}
+                                <li><a href="{{ link.href }}">{{ link.text }}</a></li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>

@@ -1,3 +1,5 @@
+from django.core.exceptions import PermissionDenied
+
 from .base import BaseViewSet
 
 from ....clients.internal.content_types import ContentTypeQuerySetClient
@@ -61,9 +63,12 @@ class ItemsListViewSet(ProjectAccessRequiredMixin, BaseViewSet):
 
         statuses = []
 
-        if content_type is not None:
-            # check if type is in tenants choices
-            pass
+        allowed_content_types = list(map(lambda x: x[0], content_types))
+
+        # Check if content_type filter has content_type thats allowed for user
+        if content_type not in [None, '', ' ']:
+            if content_type not in allowed_content_types:
+                raise PermissionDenied('Content type not allowed')
 
         if tenant is not None:
             # check if tenant is in content_types choices
@@ -80,6 +85,7 @@ class ItemsListViewSet(ProjectAccessRequiredMixin, BaseViewSet):
             keyword=keyword,
             paginate=self.paginate,
             content_type=content_type,
+            content_types=allowed_content_types,
             tenant=tenant,
             status=status,
             limit=self.page_limit

@@ -89,7 +89,11 @@
                     {% for result in results.results %}
                         <li>
                             <a href="{{ result.edit_url }}">{{ result.title }}</a><br />
-                            <small>{{ result.content_type|capfirst }}; {{ result.tenant }}; {{ result.created_at|date:'d/m/Y H:i' }}</small>
+                            <small>
+                                {{ result.content_type|capfirst }};
+                                {% if result.tenant|default:None is not None %}{{ result.tenant }};{% endif %}
+                                {{ result.created_at|date:'d/m/Y H:i' }}
+                            </small>
                         </li>
                     {% empty %}
                         <li>

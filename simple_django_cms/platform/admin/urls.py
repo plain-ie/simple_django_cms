@@ -14,7 +14,7 @@ from .viewsets.items_create_select_tenant import ItemsCreateSelectTenantViewSet
 from .viewsets.items_create_select_content_type import ItemsCreateSelectContentTypeViewSet
 from .viewsets.items_delete import ItemsDeleteViewSet
 from .viewsets.items_list import ItemsListViewSet
-from .viewsets.items_retrieve import ItemsRetrieveViewSet
+from .viewsets.items_retrieve import ItemsRetrieveViewSet, ProjectItemsRetrieveViewSet
 
 from .viewsets.projects_list import ProjectsListViewSet
 
@@ -48,8 +48,8 @@ urlpatterns = [
     ),
     path(
         'projects/<str:project_id>/items/<str:item_id>/',
-        ItemsRetrieveViewSet.as_view(),
-        name=constants.URLNAME_ADMIN_RETRIEVE_ITEMS
+        ProjectItemsRetrieveViewSet.as_view(),
+        name=constants.URLNAME_ADMIN_RETRIEVE_PROJECT_ITEMS
     ),
     path(
         'projects/<str:project_id>/items/',
