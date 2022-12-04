@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    {% constant 'URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE' as URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE %}
+    {% constant 'URLNAME_ADMIN_CREATE_ITEMS' as URLNAME_ADMIN_CREATE_ITEMS %}
     {% constant 'URLNAME_ADMIN_LIST_ITEMS' as URLNAME_ADMIN_LIST_ITEMS %}
 
     <div class="container-fluid simple-django-cms-jumboheader margin-bottom-lg">
@@ -16,9 +16,9 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <ul class="text-right">
-                            <li>
-                                <a href="{% url URLNAME_ADMIN_LIST_ITEMS project_id=view.kwargs.project_id %}">Browse items</a>
-                            </li>
+                            {% for link in management_links %}
+                                <li><a href="{{ link.href }}">{{ link.text }}</a></li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                 <ul class="simple-django-cms-list">
                     {% for result in results.results %}
                         <li>
-                            <a href="{% url URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE project_id=view.kwargs.project_id tenant_id=result.0 %}">{{ result.1 }}</a>
+                            <a href="{% url URLNAME_ADMIN_CREATE_ITEMS project_id=view.kwargs.project_id tenant_id=result.0 content_type=view.kwargs.content_type %}">{{ result.1 }}</a>
                         </li>
                     {% empty %}
                         <li>

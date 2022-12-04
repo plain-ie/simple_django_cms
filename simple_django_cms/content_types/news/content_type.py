@@ -1,5 +1,7 @@
 from ..content_type import BaseContentType
 
+from .forms import NewsItemForm, NewsTranslatableContentForm
+
 
 class NewsContentType(BaseContentType):
 
@@ -9,3 +11,6 @@ class NewsContentType(BaseContentType):
     has_tenant = True
     name = 'news'
     requires_project_admin = False
+
+    item_form = NewsItemForm
+    translatable_contents_form = NewsTranslatableContentForm

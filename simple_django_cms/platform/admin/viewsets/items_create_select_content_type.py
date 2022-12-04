@@ -1,17 +1,18 @@
 from django.contrib import messages
 
+from .... import constants
 from ....clients.internal.content_types import ContentTypeQuerySetClient
 from ....clients.internal.projects import ProjectQuerySetClient
-from ....clients.internal.tenants import TenantQuerySetClient
 from ....conf import settings
 
-from ..permissions.access_mixins import ProjectTenantAccessRequiredMixin
+from ..permissions.access_mixins import ProjectAccessRequiredMixin
+from ..utils import get_management_link_project_items
 
 from .base import BaseViewSet
 
 
 class ItemsCreateSelectContentTypeViewSet(
-    ProjectTenantAccessRequiredMixin,
+    ProjectAccessRequiredMixin,
     BaseViewSet
 ):
 
@@ -23,29 +24,29 @@ class ItemsCreateSelectContentTypeViewSet(
     page_subtitle = 'Select content type'
     template = settings.TEMPLATE_CREATE_ITEM_SELECT_CONTENT_TYPE
 
-    def get(self, request, project_id, tenant_id):
+    def get(self, request, project_id):
         return self._render(request, self.template, context=self.get_context())
 
     def get_context(self):
 
         user_id = self.request.user.id
-        tenant_id = self.kwargs['tenant_id']
         project_id = self.kwargs['project_id']
         page = int(self.request.GET.get(self.page_query_string, '1'))
         keyword = self.request.GET.get(self.keyword_query_string, None)
+
+        language = settings.DEFAULT_LANGUAGE
+        default_language = settings.DEFAULT_LANGUAGE
 
         #
 
         content_type_client = ContentTypeQuerySetClient()
         project_client = ProjectQuerySetClient()
-        tenant_client = TenantQuerySetClient()
 
         project = project_client.get_project(project_id)
-        tenant = tenant_client.get_tenant(tenant_id)
 
         messages.info(
             self.request,
-            f'Creating item for project "{project.name}" tenant "{tenant.name}"'
+            f'Creating item for project "{project.name}"'
         )
 
         #
@@ -57,12 +58,48 @@ class ItemsCreateSelectContentTypeViewSet(
             keyword=keyword,
             limit=self.page_limit,
             paginate=self.paginate,
-            format='choices'
+            format='list'
         )
+
+        content_types_data = []
+
+        for content_type in content_types['results']:
+
+            href = '#'
+            text = content_type.get_display_name_plural(
+                language, default_language)
+
+            if content_type.has_tenant is False:
+                href = self._reverse(
+                    constants.URLNAME_ADMIN_CREATE_PROJECT_ITEMS,
+                    kwargs={
+                        'project_id': project_id,
+                        'content_type': content_type.name
+                    }
+                )
+            else:
+                href = self._reverse(
+                    constants.URLNAME_ADMIN_CREATE_ITEMS_SELECT_TENANT,
+                    kwargs={
+                        'project_id': project_id,
+                        'content_type': content_type.name
+                    }
+                )
+
+            content_types_data.append({
+                'href': href,
+                'text': text,
+            })
+
+        content_types['results'] = content_types_data
 
         #
         context = super().get_context()
         context['page']['subtitle'] = self.page_subtitle
         context['results'] = content_types
+        context['management_links'] = [
+            get_management_link_project_items(
+                project_id, language, default_language),
+        ]
 
         return context

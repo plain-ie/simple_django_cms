@@ -1,11 +1,21 @@
 URLNAME_ADMIN_CREATE_ITEMS = 'create_item'
+URLNAME_ADMIN_CREATE_PROJECT_ITEMS = 'create_project_items'
+
 URLNAME_ADMIN_CREATE_ITEMS_SELECT_TENANT = 'create_item_select_tenant'
 URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE = 'create_item_select_content_type'
+
 URLNAME_ADMIN_DELETE_ITEMS = 'delete_item'
+URLNAME_ADMIN_DELETE_PROJECT_ITEMS = 'delete_project_item'
+
 URLNAME_ADMIN_LIST_ITEMS = 'list_items'
+
 URLNAME_ADMIN_LIST_PROJECTS = 'list_projects'
+
 URLNAME_ADMIN_RETRIEVE_ITEMS = 'retrieve_item'
 URLNAME_ADMIN_RETRIEVE_PROJECT_ITEMS = 'retrieve_project_item'
+
+URLNAME_ADMIN_TOGGLE_PUBLISH_ITEMS = 'toggle_publish_items'
+URLNAME_ADMIN_TOGGLE_PUBLISH_PROJECT_ITEMS = 'toggle_publish_projects_items'
 
 URLNAME_AUTH_SIGNIN = 'sign_in'
 URLNAME_AUTH_SIGNOUT = 'sign_out'

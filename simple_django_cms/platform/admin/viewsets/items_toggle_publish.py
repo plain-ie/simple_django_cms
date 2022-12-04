@@ -8,7 +8,7 @@ from ..permissions.access_mixins import (
 )
 
 
-class ItemsDeleteViewSet(
+class ItemsTogglePublishViewSet(
     ProjectTenantAccessRequiredMixin,
     BaseViewSet,
 ):
@@ -18,7 +18,7 @@ class ItemsDeleteViewSet(
         item = self.get_item(item_id)
         ct = self.get_content_type(item.content_type)
 
-        return ct.admin_delete(
+        return ct.admin_toggle_publish(
             self,
             item,
             settings.DEFAULT_LANGUAGE,
@@ -26,17 +26,14 @@ class ItemsDeleteViewSet(
         )
 
 
-class ProjectItemsDeleteViewSet(
-    ProjectAdminAccessRequiredMixin,
-    BaseViewSet,
-):
+class ProjectItemsTogglePublishViewSet(BaseViewSet):
 
     def get(self, request, project_id, item_id):
 
         item = self.get_item(item_id)
         ct = self.get_content_type(item.content_type)
 
-        return ct.admin_delete(
+        return ct.admin_toggle_publish(
             self,
             item,
             settings.DEFAULT_LANGUAGE,

@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from ..conf import settings
 from ..loader import load
 
@@ -16,7 +18,10 @@ class ContentTypeRegistry:
             self.register(serializer_string)
 
     def find(self, content_type):
-        return self.content_types.get(content_type, None)
+        content_type = self.content_types.get(content_type, None)
+        if content_type is None:
+            raise ObjectDoesNotExist(f'"{content_type}" does not exist')
+        return content_type
 
     def register(self, serializer_string):
 
@@ -32,9 +37,16 @@ class ContentTypeRegistry:
     def get_content_types(
         self,
         browsable=None,
+        keyword=None,
         requires_project_admin=None,
         format='list'
     ):
+
+        _keyword = None
+
+        if keyword is not None:
+            _keyword = str(keyword)
+            _keyword = _keyword.strip()
 
         _content_types = []
 
@@ -47,9 +59,15 @@ class ContentTypeRegistry:
                 if ct.browsable != browsable:
                     add = False
 
-            if requires_project_admin is not None:
-                if ct.requires_project_admin != requires_project_admin:
-                    add = False
+            if add is True:
+                if requires_project_admin is not None:
+                    if ct.requires_project_admin != requires_project_admin:
+                        add = False
+
+            if add is True:
+                if _keyword is not None:
+                    if ct.name.startswith(_keyword) is False:
+                        add = False
 
             if add is True:
                 _content_types.append(ct)

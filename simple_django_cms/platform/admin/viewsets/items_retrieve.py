@@ -1,6 +1,6 @@
 from ....conf import settings
 
-from ..permissions.access_mixins import ProjectTenantAccessRequiredMixin, ProjectAccessRequiredMixin
+from ..permissions.access_mixins import ProjectTenantAccessRequiredMixin, ProjectAdminAccessRequiredMixin
 
 from .base import BaseViewSet
 
@@ -15,7 +15,7 @@ class ItemsRetrieveViewSet(
         item = self.get_item(item_id)
         ct = self.get_content_type(item.content_type)
 
-        return ct.admin_retrieve(
+        return ct.admin_retrieve_create_update(
             self,
             item,
             settings.DEFAULT_LANGUAGE,
@@ -27,7 +27,7 @@ class ItemsRetrieveViewSet(
         item = self.get_item(item_id)
         ct = self.get_content_type(item.content_type)
 
-        return ct.admin_update(
+        return ct.admin_retrieve_create_update(
             self,
             item,
             settings.DEFAULT_LANGUAGE,
@@ -36,7 +36,7 @@ class ItemsRetrieveViewSet(
 
 
 class ProjectItemsRetrieveViewSet(
-    ProjectAccessRequiredMixin,
+    ProjectAdminAccessRequiredMixin,
     BaseViewSet
 ):
 
@@ -45,7 +45,7 @@ class ProjectItemsRetrieveViewSet(
         item = self.get_item(item_id)
         ct = self.get_content_type(item.content_type)
 
-        return ct.admin_retrieve(
+        return ct.admin_retrieve_create_update(
             self,
             item,
             settings.DEFAULT_LANGUAGE,
@@ -57,7 +57,7 @@ class ProjectItemsRetrieveViewSet(
         item = self.get_item(item_id)
         ct = self.get_content_type(item.content_type)
 
-        return ct.admin_update(
+        return ct.admin_retrieve_create_update(
             self,
             item,
             settings.DEFAULT_LANGUAGE,

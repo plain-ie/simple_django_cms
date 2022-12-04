@@ -2,6 +2,7 @@ from django.core.exceptions import PermissionDenied
 
 from .base import BaseViewSet
 
+from .... import constants
 from ....clients.internal.content_types import ContentTypeQuerySetClient
 from ....clients.internal.items import ItemQuerySetClient
 from ....clients.internal.projects import ProjectQuerySetClient
@@ -106,5 +107,20 @@ class ItemsListViewSet(ProjectAccessRequiredMixin, BaseViewSet):
             'content_types': content_types,
             'statuses': statuses
         }
+        context['management_links'] = [
+            {
+                'href': self._reverse(constants.URLNAME_ADMIN_LIST_PROJECTS),
+                'text': 'Change project',
+            },
+            {
+                'href': self._reverse(
+                    constants.URLNAME_ADMIN_CREATE_ITEMS_SELECT_CONTENT_TYPE,
+                    kwargs={
+                        'project_id': project_id
+                    }
+                ),
+                'text': 'Create new',
+            }
+        ]
 
         return context

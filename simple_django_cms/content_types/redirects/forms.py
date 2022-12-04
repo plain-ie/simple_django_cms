@@ -1,9 +1,9 @@
 from django import forms
 
-from ...conf import settings
+from ..forms import ItemDataForm
 
 
-class RedirectItemDataForm(forms.Form):
+class RedirectItemDataForm(ItemDataForm):
 
     source = forms.URLField()
     redirect_to = forms.URLField()

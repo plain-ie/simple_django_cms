@@ -99,3 +99,14 @@ class ItemQuerySetClient:
         item = Item.objects.create(**item_data)
 
         return item
+
+    def update(
+        self,
+        item_id,
+        item_data,
+        relations_data=[],
+    ):
+
+        items = Item.objects.filter(id=item_id).update(**item_data)
+
+        return self.get_item(item_id)

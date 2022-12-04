@@ -32,7 +32,8 @@ class ContentTypeQuerySetClient:
 
         queryset = settings.CONTENT_TYPE_REGISTRY.get_content_types(
             requires_project_admin=requires_project_admin,
-            format='choices'
+            keyword=keyword,
+            format=format
         )
 
         total = len(queryset)

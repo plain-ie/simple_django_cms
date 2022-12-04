@@ -79,6 +79,7 @@ class Settings:
                 f'{root}.images.content_type.ImageContentType',
                 f'{root}.news.content_type.NewsContentType',
                 f'{root}.redirects.content_type.RedirectContentType',
+                f'{root}.topics.content_type.TopicContentType',
             ]
         )
 

@@ -20,8 +20,7 @@ class ProjectTenantAccessRequiredMixin(AccessMixin):
         if request.user.is_authenticated is False:
             return self.handle_no_permission()
 
-        user_client = UserQuerySetClient()
-        has_access = user_client.user_has_tenant_access(
+        has_access = UserQuerySetClient().user_has_tenant_access(
             kwargs['project_id'],
             kwargs['tenant_id'],
             request.user.id
@@ -40,8 +39,25 @@ class ProjectAccessRequiredMixin(AccessMixin):
         if request.user.is_authenticated is False:
             return self.handle_no_permission()
 
-        user_client = UserQuerySetClient()
-        has_access = user_client.user_has_project_access(
+        has_access = UserQuerySetClient().user_has_project_access(
+            kwargs['project_id'],
+            request.user.id
+        )
+
+        if has_access is True:
+            return super().dispatch(request, *args, **kwargs)
+
+        return self.handle_no_permission()
+
+
+class ProjectAdminAccessRequiredMixin(AccessMixin):
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.user.is_authenticated is False:
+            return self.handle_no_permission()
+
+        has_access = UserQuerySetClient().user_is_project_admin(
             kwargs['project_id'],
             request.user.id
         )
