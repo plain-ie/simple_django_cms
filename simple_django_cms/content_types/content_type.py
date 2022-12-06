@@ -29,15 +29,16 @@ class BaseContentType:
     display_name_plural = 'base'
     display_name_singular = 'base'
     has_tenant = False
+    item_form = None  # Form
+    item_data_form = None  # Form
+    max_per_project = 0
+    max_per_tenant = 0
     name = 'base'
     requires_project_admin = False
     serializer_class = ItemSerializer
     template_admin_create = settings.TEMPLATE_CREATE_ITEM
     template_admin_retrieve = settings.TEMPLATE_RETRIEVE_ITEM
-
-    item_form = None
-    item_data_form = None
-    translatable_contents_form = None
+    translatable_contents_form = None  # Form
 
     # --
     # Forms

@@ -12,6 +12,8 @@ class ItemDataForm(forms.Form):
 
 class TranslatableContentForm(forms.Form):
 
+    slug = forms.SlugField(disabled=True, required=False)
+
     def clean_slug(self):
         title = self.cleaned_data['title']
         return slugify(title)
