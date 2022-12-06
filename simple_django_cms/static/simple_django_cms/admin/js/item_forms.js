@@ -15,7 +15,7 @@ function EmptyTranslatableContentForm(parent){
         form.html(inner_html)
 
         var language_input = form.find(
-            'input[name=form-' + index + '-language]'
+            'input[name$=form-' + index + '-language]'
         ).first().val(language);
 
         form.find(self.parent.remove_trigger_selector).each(function(){
@@ -177,6 +177,16 @@ function TranslatableContentFormset(){
             });
         });
     };
+    this.listen_for_remove_event = function(){
+        var self = this;
+        self.object.find(self.remove_trigger_selector).each(function(){
+            $(this).click(function(event){
+                var index = $(this).attr('data-formset-index');
+                self.remove('-', index);
+                event.preventDefault();
+            });
+        });
+    };
     //
     this.add_form = function(language, index){
         var self = this;
@@ -233,7 +243,7 @@ function TranslatableContentFormset(){
     this.detect = function(){
         var self = this;
         var objects = $(self.selector);
-        if (objects.length === 1){
+        if (objects.length > 0){
 
             self.object = objects.first();
 
@@ -247,6 +257,7 @@ function TranslatableContentFormset(){
             self.empty_tab.detect();
 
             self.listen_for_add_event();
+            self.listen_for_remove_event();
 
         };
     };

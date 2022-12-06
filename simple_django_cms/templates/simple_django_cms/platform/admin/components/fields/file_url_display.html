@@ -1,0 +1,11 @@
+{% load simple_django_cms_tags %}
+
+<p>
+    {% if widget.value|default:'' != '' %}
+        {% uploaded_file_url widget.value|stringformat:'s' as FILE_URL %}
+        File: <small>{{ FILE_URL }}</small><br />
+        <a href="{{ FILE_URL }}" target="_blank">Open file in new window</a>
+    {% else %}
+        No file found
+    {% endif %}
+</p>

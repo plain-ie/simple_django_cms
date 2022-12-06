@@ -7,15 +7,15 @@ from ... import constants
 from ..serializers import ItemSerializer
 
 
-class DataSerializer(BaseModel):
+class RedirectDataSerializer(BaseModel):
 
     source: str
     redirect_to: str
 
 
-class RedirectSerilizer(ItemSerializer):
+class RedirectSerializer(ItemSerializer):
 
-    data: DataSerializer
+    data: RedirectDataSerializer
 
     def get_edit_url(self):
         return reverse(

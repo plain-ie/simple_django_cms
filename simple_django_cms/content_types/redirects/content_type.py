@@ -1,7 +1,7 @@
 from ..content_type import BaseContentType
 
 from .forms import RedirectItemDataForm
-from .serializers import RedirectSerilizer
+from .serializers import RedirectSerializer
 
 
 class RedirectContentType(BaseContentType):
@@ -11,5 +11,5 @@ class RedirectContentType(BaseContentType):
     has_tenant = False
     name = 'redirects'
     requires_project_admin = True
-    serializer_class = RedirectSerilizer
+    serializer_class = RedirectSerializer
     item_data_form = RedirectItemDataForm

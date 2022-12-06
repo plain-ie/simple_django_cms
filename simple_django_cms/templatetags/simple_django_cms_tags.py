@@ -1,6 +1,7 @@
 from django import template
 
 from .. import constants
+from ..clients.internal.files import FileClient
 from ..conf import settings
 
 
@@ -40,3 +41,8 @@ def override_field_attr(field, value):
     attr_name, attr_value = value.split('|')
     field.field.widget.attrs[attr_name] = attr_value
     return field
+
+
+@register.simple_tag
+def uploaded_file_url(path):
+    return FileClient().get_file_url(path)

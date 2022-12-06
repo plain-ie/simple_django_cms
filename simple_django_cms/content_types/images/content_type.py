@@ -1,5 +1,8 @@
 from ..content_type import BaseContentType
 
+from .forms import ImageTranslatableContentForm
+from .serializers import ImageSerializer
+
 
 class ImageContentType(BaseContentType):
 
@@ -8,3 +11,6 @@ class ImageContentType(BaseContentType):
     has_tenant = True
     name = 'images'
     requires_project_admin = False
+
+    serializer_class = ImageSerializer
+    translatable_contents_form = ImageTranslatableContentForm

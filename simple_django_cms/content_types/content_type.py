@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, reverse
 
 from .. import constants
 from ..conf import settings
+from ..clients.internal.files import FileClient
 from ..clients.internal.items import ItemQuerySetClient
 from ..clients.internal.projects import ProjectQuerySetClient
 from ..clients.internal.tenants import TenantQuerySetClient
@@ -44,28 +45,39 @@ class BaseContentType:
     def get_item_form(
         self,
         data,
+        files,
         serialized_data,
     ):
 
         if self.item_form is None:
             return None
 
-        return self.item_form(data, initial=serialized_data)
+        return self.item_form(
+            data,
+            files,
+            initial=serialized_data
+        )
 
     def get_item_data_form(
         self,
         data,
+        files,
         serialized_data,
     ):
 
         if self.item_data_form is None:
             return None
 
-        return self.item_data_form(data, initial=serialized_data['data'])
+        return self.item_data_form(
+            data,
+            files,
+            initial=serialized_data['data']
+        )
 
     def get_translatable_contents_form_formset(
         self,
         data,
+        files,
         serialized_data,
     ):
 
@@ -80,7 +92,12 @@ class BaseContentType:
         initial = serialized_data.get('data', {})
         initial = initial.get('translatable_contents', [])
 
-        return formset(data, initial=initial)
+        return formset(
+            data,
+            files,
+            initial=initial,
+            prefix='translatable-contents-form'
+        )
 
     # --
 
@@ -130,9 +147,17 @@ class BaseContentType:
         initial = None
         request_method = view.request.method
         request_data = None
+        request_files = None
+        in_memory_file_class = 'InMemoryUploadedFile'
+        temp_uploaded_file_class = 'TemporaryUploadedFile'
+        upload_file_classes = [
+            in_memory_file_class,
+            temp_uploaded_file_class
+        ]
 
         if request_method == 'POST':
             request_data = view.request.POST
+            request_files = view.request.FILES
 
         project_id = view.kwargs['project_id']
         tenant_id = view.kwargs.get('tenant_id', None)
@@ -142,6 +167,7 @@ class BaseContentType:
 
         projects_client = ProjectQuerySetClient()
         tenants_client = TenantQuerySetClient()
+        files_client = FileClient()
 
         # --
         # Context data
@@ -236,10 +262,19 @@ class BaseContentType:
         # --
         # Forms
 
-        item_form = self.get_item_form(request_data, initial)
-        item_data_form = self.get_item_data_form(request_data, initial)
+        item_form = self.get_item_form(
+            request_data,
+            request_files,
+            initial
+        )
+        item_data_form = self.get_item_data_form(
+            request_data,
+            request_files,
+            initial
+        )
         translatable_contents_formset = self.get_translatable_contents_form_formset(
             request_data,
+            request_files,
             initial
         )
 
@@ -265,6 +300,8 @@ class BaseContentType:
 
                 item_data = {}
                 relations_data = []
+                files_to_upload = {}
+                files_to_remove = []
 
                 if item_form is not None:
                     item_data = dict(item_form.cleaned_data)
@@ -277,8 +314,87 @@ class BaseContentType:
                 if item_data_form is not None:
                     item_data['data'] = dict(item_data_form.cleaned_data)
 
+                    # --
+                    # Capture files to handle
+
+                    for key in item_data['data'].keys():
+
+                        value = item_data['data'][key]
+
+                        _url = item_data['data'].get(f'{key}_url', None)
+                        if _url is None:
+                            _url = ''
+
+                        if type(value).__name__ in upload_file_classes:
+
+                            new_file_name = files_client.get_file_path(
+                                project_id,
+                                tenant_id,
+                                value.name
+                            )
+
+                            #
+                            # Check if file can be replaced:
+                            # - If file extension is the same, file can be
+                            # overwritten with new file
+                            # - Remove file that is not being overwritten
+                            #
+
+                            if files_client.extensions_match(
+                                new_file_name,
+                                _url
+                            ) is True:
+                                new_file_name = _url
+                            else:
+                                files_to_remove.append(_url)
+
+                            files_to_upload[new_file_name] = value
+                            item_data['data'][key] = new_file_name
+
                 if translatable_contents_formset is not None:
                     item_data['data']['translatable_contents'] = translatable_contents_formset.cleaned_data
+
+                    # --
+                    # Capture files to handle
+
+                    for content in item_data['data']['translatable_contents']:
+                        for key in content.keys():
+
+                            value = content[key]
+
+                            _url = content.get(f'{key}_url', None)
+                            if _url is None:
+                                _url = ''
+
+                            if type(value).__name__ in upload_file_classes:
+
+                                new_file_name = files_client.get_file_path(
+                                    project_id,
+                                    tenant_id,
+                                    value.name
+                                )
+
+                                #
+                                # Check if file can be replaced:
+                                # - If file extension is the same, file can be
+                                # overwritten with new file
+                                # - Remove file that is not being overwritten
+                                #
+
+                                if files_client.extensions_match(
+                                    new_file_name,
+                                    _url
+                                ) is True:
+                                    new_file_name = _url
+                                else:
+                                    files_to_remove.append(_url)
+
+                                files_to_upload[new_file_name] = value
+                                content[f'{key}_url'] = new_file_name
+                                content[key] = new_file_name
+
+                # --
+                # Handle item
 
                 if object is None:
 
@@ -306,6 +422,17 @@ class BaseContentType:
                         view.request,
                         'Item updated successfully'
                     )
+
+                # --
+                # Handle files
+
+                for key in files_to_upload.keys():
+                    files_client.upload(key, files_to_upload[key])
+
+                for path in files_to_remove:
+                    files_client.remove(path)
+
+                # --
 
                 return redirect(
                     get_item_admin_url(

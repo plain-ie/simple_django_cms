@@ -2,6 +2,7 @@ __pycache__
 .venv
 db.sqlite3
 /demo/
+/media/
 manage.py
 */migrations/*
 !*/migrations/__init__.py
