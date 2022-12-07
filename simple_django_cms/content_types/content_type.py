@@ -100,6 +100,17 @@ class BaseContentType:
             prefix='translatable-contents-form'
         )
 
+    def get_relation_formsets(
+        self,
+        data,
+        files,
+        serialized_data,
+        language,
+        default_language,
+    ):
+
+        return []
+
     # --
 
     def get_display_name_plural(self, language, default_language):
@@ -278,6 +289,13 @@ class BaseContentType:
             request_files,
             initial
         )
+        relations_formsets = self.get_relation_formsets(
+            request_data,
+            request_files,
+            initial,
+            language,
+            default_language,
+        )
 
         # --
         # Validate forms if request is POST
@@ -296,6 +314,11 @@ class BaseContentType:
                 for content_form in translatable_contents_formset:
                     if content_form.is_valid() is False:
                         errors += content_form.errors
+
+            for formset in relations_formsets:
+                for relation_form in formset:
+                    if relation_form.is_valid() is False:
+                        errors += relation_form.errors
 
             if len(errors) == 0:
 
@@ -456,7 +479,7 @@ class BaseContentType:
             },
             'formsets': {
                 'translatable_contents': translatable_contents_formset,
-                'relations': []
+                'relations': relations_formsets,
             },
             'item': object,
             'management_links': management_links,

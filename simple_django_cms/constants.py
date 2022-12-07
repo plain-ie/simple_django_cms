@@ -22,3 +22,10 @@ URLNAME_AUTH_SIGNOUT = 'sign_out'
 URLNAME_AUTH_REGISTER = 'register'
 URLNAME_AUTH_FORGOT_PASSWORD = 'forgot_password'
 URLNAME_AUTH_RESET_PASSWORD = 'reset_password'
+
+
+RELATION_NAME_NOT_SET = 'not-set'
+RELATION_NAME_TOPICS = 'topics'
+
+
+CONTENT_TYPE_NAME_TOPICS = 'topics'

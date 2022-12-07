@@ -1,0 +1,18 @@
+{% load simple_django_cms_tags %}
+
+<div class="form-group">
+    <div class="input-group">
+        <input type="text" value="{{ widget.value }}" id="{{ widget.name }}" class="form-control input-lg" disabled />
+        <input type="hidden" name="{{ widget.name }}" value="{{ widget.value }}" />
+        <span class="input-group-btn">
+            <a href="#" class="btn btn-danger btn-lg">
+                <span class="glyphicon glyphicon-minus"></span>
+            </a>
+        </span>
+    </div>
+    {% if FIELD.help_text %}
+        <p class="help-block">
+            {{ FIELD.help_text|safe }}
+        </p>
+    {% endif %}
+</div>

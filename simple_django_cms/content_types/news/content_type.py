@@ -1,6 +1,12 @@
-from ..content_type import BaseContentType
+from ... import constants
 
-from .forms import NewsItemForm, NewsTranslatableContentForm
+from ..content_type import BaseContentType
+from ..topics.utils import get_topics_relation_formset
+
+from .forms import (
+    NewsItemForm,
+    NewsTranslatableContentForm,
+)
 
 
 class NewsContentType(BaseContentType):
@@ -14,3 +20,35 @@ class NewsContentType(BaseContentType):
 
     item_form = NewsItemForm
     translatable_contents_form = NewsTranslatableContentForm
+
+    def get_relation_formsets(
+        self,
+        data,
+        files,
+        serialized_data,
+        language,
+        default_language,
+    ):
+
+        formsets = []
+
+        initial = serialized_data.get('parents', [])
+
+        initial_topics = list(
+            filter(
+                lambda x: x['status'] == constants.RELATION_NAME_TOPICS,
+                initial
+            )
+        )
+
+        formsets.append(
+            get_topics_relation_formset(
+                data,
+                files,
+                initial=initial_topics,
+                prefix='topics-relation-form',
+                formset_title='Topics'
+            )
+        )
+
+        return formsets

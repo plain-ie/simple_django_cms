@@ -1,7 +1,12 @@
 from django import forms
 from django.forms import widgets
 
-from ..forms import ItemForm, TranslatableContentForm
+from ... import constants
+
+from ..fields import ItemRelationParentField
+from ..forms import ItemForm, TranslatableContentForm, ItemRelationForm
+
+from ..topics.content_type import TopicContentType
 
 
 class NewsItemForm(ItemForm):

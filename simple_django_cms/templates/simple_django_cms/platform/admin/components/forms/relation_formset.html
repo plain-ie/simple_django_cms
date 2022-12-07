@@ -1,68 +1,30 @@
-{% load iamheadless_publisher_admin_tags %}
-{% load i18n %}
+<div class="formset-relations">
 
-{% define FORM.direction as RELATION_DIRECTION %}
-{% define FORM.status as RELATION_STATUS %}
-
-{% translate 'XXX' as XXX %}
-
-<div class="formset-relations" data-relation-direction="{{ DIRECTION }}" data-relation-status="{{ STATUS }}" data-relation-choices-url="{{ CHOICES_URL }}">
+    {% if FORMSET.formset_title|default:None is not None %}
+        <h3 class="margin-bottom-md">
+            <span class="pull-right">
+                <small>
+                    <a href="#">
+                        Add new relation
+                    </a>
+                </small>
+            </span>
+            {{ FORMSET.formset_title }}
+        </h3>
+    {% endif %}
 
     <div class="formset-empty-form" style="display: none;">
-        {{ FORMSET.empty_form }}
-        <div class="form-group">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <div class="input-group">
-                        <input type="text" class="form-control input-lg" value="replace" disabled>
-                        <span class="input-group-btn">
-                            <a class="btn btn-default btn-lg formset-trigger-remove-form" type="button">
-                                <span class="glyphicon glyphicon-trash"></span>
-                                <span class="sr-only">Remove</span>
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include 'simple_django_cms/platform/admin/components/forms/relation_form.html' with FORM=FORMSET.empty_form %}
     </div>
 
     <div class="formset-management-form">
         {{ FORMSET.management_form }}
     </div>
 
-    <div class="form-group formset-choices">
-        <div class="row">
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 formset-choices-empty-choice" style="display: none;">
-                <div class="input-group">
-                    <input type="text" class="form-control input-lg" value="" disabled>
-                    <span class="input-group-btn">
-                        <a href="#" class="btn btn-default btn-lg formset-trigger-add-form" type="button">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            <span class="sr-only">Add</span>
-                        </a>
-                    </span>
-                </div>
-            </div>
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <input type="text" class="form-control input-lg formset-choices-search-trigger" placeholder="Enter keyword">
-            </div>
-
-        </div>
-    </div>
-
-    <h3 class="font-normal">
-        Selected
-    </h3>
-
     {% for form in FORMSET %}
-        {% include 'iamheadless_publisher_admin\components\forms\relation_form.html' with FORM=form %}
-    {% empty %}
-        {% comment %}
-            {% include 'iamheadless_publisher_admin/components/alerts/alert.html' with TAG='info' MESSAGE='No relations' %}
-        {% endcomment %}
+        <div class="formset-form">
+            {% include 'simple_django_cms/platform/admin/components/forms/relation_form.html' with FORM=form %}
+        </div>
     {% endfor %}
 
 </div>
