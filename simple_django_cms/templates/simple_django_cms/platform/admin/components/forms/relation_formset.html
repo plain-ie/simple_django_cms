@@ -4,7 +4,7 @@
         <h3 class="margin-bottom-md">
             <span class="pull-right">
                 <small>
-                    <a href="#">
+                    <a href="#" class="formset-trigger-add-form">
                         Add new relation
                     </a>
                 </small>
@@ -13,7 +13,7 @@
         </h3>
     {% endif %}
 
-    <div class="formset-empty-form" style="display: none;">
+    <div class="formset-empty-form" id="__prefix__-relation-form" style="display: none;">
         {% include 'simple_django_cms/platform/admin/components/forms/relation_form.html' with FORM=FORMSET.empty_form %}
     </div>
 
@@ -22,7 +22,7 @@
     </div>
 
     {% for form in FORMSET %}
-        <div class="formset-form">
+        <div class="formset-form" id="{{ forloop.counter0 }}-relation-form">
             {% include 'simple_django_cms/platform/admin/components/forms/relation_form.html' with FORM=form %}
         </div>
     {% endfor %}

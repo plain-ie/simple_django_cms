@@ -1,41 +1,8 @@
-function EmptyTranslatableContentForm(parent){
-    this.parent = parent;
-    this.selector = '.formset-empty-form';
-    this.object = null;
-    //
-    this.get_fresh_form = function(language, index){
-        var self = this;
-
-        var form = self.object.find('.tab-pane').first().clone();
-
-        var id = form.attr('id');
-        form.attr('id', id.replace('__prefix__', index))
-
-        var inner_html = form.html().replaceAll('__prefix__', index)
-        form.html(inner_html)
-
-        var language_input = form.find(
-            'input[name$=form-' + index + '-language]'
-        ).first().val(language);
-
-        form.find(self.parent.remove_trigger_selector).each(function(){
-            $(this).click(function(event){
-                self.parent.remove(language, index);
-                event.preventDefault();
-            });
-        });
-
-        return form
-    };
-    //
-    this.detect = function(){
-        var self = this;
-        object = self.parent.object.find(self.selector).first();
-        self.object = object.clone();
-        object.remove();
-    };
-};
-
+// ---
+//
+// COMMON FORMS
+//
+// ---
 
 function ManagementForm(parent){
     this.parent = parent;
@@ -127,6 +94,51 @@ function ManagementForm(parent){
     };
 };
 
+// ---
+//
+// TRANSLATABLE CONTENT FORMS
+//
+// ---
+
+
+function EmptyTranslatableContentForm(parent){
+    this.parent = parent;
+    this.selector = '.formset-empty-form';
+    this.object = null;
+    //
+    this.get_fresh_form = function(language, index){
+        var self = this;
+
+        var form = self.object.find('.tab-pane').first().clone();
+
+        var id = form.attr('id');
+        form.attr('id', id.replace('__prefix__', index))
+
+        var inner_html = form.html().replaceAll('__prefix__', index)
+        form.html(inner_html)
+
+        var language_input = form.find(
+            'input[name$=form-' + index + '-language]'
+        ).first().val(language);
+
+        form.find(self.parent.remove_trigger_selector).each(function(){
+            $(this).click(function(event){
+                self.parent.remove(language, index);
+                event.preventDefault();
+            });
+        });
+
+        return form
+    };
+    //
+    this.detect = function(){
+        var self = this;
+        object = self.parent.object.find(self.selector).first();
+        self.object = object.clone();
+        object.remove();
+    };
+};
+
 
 function EmptyTranslatableContentTab(parent){
     this.parent = parent;
@@ -159,7 +171,7 @@ function EmptyTranslatableContentTab(parent){
 };
 
 
-function TranslatableContentFormset(){
+function TranslatableContentFormSet(){
     this.remove_trigger_selector = '.formset-trigger-remove-form';
     this.add_trigger_selector = '.formset-trigger-add-form';
     this.selector = '.formset-translatable-contents';
@@ -264,8 +276,131 @@ function TranslatableContentFormset(){
 };
 
 
+//  ---
+//
+// RELATION FORMS
+//
+// ---
+
+
+function EmptyRelationForm(parent){
+    this.parent = parent;
+    this.selector = '.formset-empty-form';
+    this.object = null;
+    //
+    this.get_fresh_form = function(index){
+        var self = this;
+
+        var form = self.object.clone();
+
+        var id = form.attr('id');
+        form.attr('id', id.replace('__prefix__', index))
+
+        form.attr('class', 'formset-form');
+        form.removeAttr('style');
+
+        var inner_html = form.html().replaceAll('__prefix__', index)
+        form.html(inner_html)
+
+        form.find(self.parent.remove_trigger_selector).each(function(){
+            $(this).click(function(event){
+                self.parent.remove(index);
+                event.preventDefault();
+            });
+        });
+
+        return form
+    };
+    //
+    this.detect = function(){
+        var self = this;
+        object = self.parent.object.find(self.selector).first();
+        self.object = object.clone();
+        object.remove();
+    };
+};
+
+
+function RelationFormSet(){
+    this.remove_trigger_selector = '.formset-trigger-remove-form';
+    this.add_trigger_selector = '.formset-trigger-add-form';
+    this.selector = '.formset-relations';
+    this.object = null;
+    this.empty_form = null;
+    this.management_form = null;
+    //
+    this.listen_for_add_event = function(){
+        var self = this;
+        self.object.find(self.add_trigger_selector).each(function(){
+            $(this).click(function(event){
+                self.add();
+                event.preventDefault();
+            });
+        });
+    };
+    this.listen_for_remove_event = function(){
+        var self = this;
+        self.object.find(self.remove_trigger_selector).each(function(index){
+            $(this).click(function(event){
+                self.remove(index);
+                event.preventDefault();
+            });
+        });
+    };
+    //
+    this.add = function(){
+        var self = this;
+        self.management_form.add()
+        var index = self.management_form.get_total_forms_count() - 1;
+        var form = self.empty_form.get_fresh_form(index);
+        self.object.append(form);
+    };
+    this.remove = function(index){
+        var self = this;
+        var form = self.object.find('#'+ index+'-relation-form').first();
+        if (form){
+            self.management_form.remove();
+            form.remove();
+        };
+    };
+    //
+    this.detect = function(parent){
+        var self = this;
+        var objects = $(self.selector);
+        if (objects.length > 0){
+
+            self.object = objects.first();
+
+            self.management_form = new ManagementForm(self)
+            self.management_form.detect();
+
+            self.empty_form = new EmptyRelationForm(self);
+            self.empty_form.detect();
+
+            self.listen_for_add_event();
+            self.listen_for_remove_event();
+
+        };
+    };
+    this.detect_all = function(){
+        var self = this;
+        $(self.selector).each(function(){
+            new RelationFormSet($(this)).detect();
+        });
+    };
+};
+
+
+//  ---
+//
+// INIT
+//
+// ---
+
+
 $(document).ready(function(){
 
-    new TranslatableContentFormset().detect();
+    new TranslatableContentFormSet().detect();
+    new RelationFormSet().detect_all();
 
 });

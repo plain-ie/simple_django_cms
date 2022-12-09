@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from ..content_types.serializers import ItemSerializer
+from ..models import Item, Project, Tenant, ItemRelation, User, ProjectAdmin, Tenancy, TenantUser
 
 
 class ContentTypesFormsTestCase(TestCase):
@@ -34,32 +35,67 @@ class ContentTypesFormsTestCase(TestCase):
         'project_id': 1,
         'tenant_id': 1,
         'published': False,
-        'archived': False,
-        'deleted': False,
     }
 
 
     def test_item_serializer(self):
 
-        serializer_class = ItemSerializer
-        serializer = serializer_class(**self.item)
+        user1 = User.objects.create(email='x@xx.com')
+        user2 = User.objects.create(email='y@yy.com')
 
-        display_data = serializer.get_display_content(
-            language=self.a_code,
-            default_language=self.a_code
+        project = Project.objects.create(name='1')
+
+        ProjectAdmin.objects.create(project=project, user=user1)
+
+        tenant = Tenant.objects.create(name='1')
+
+        Tenancy.objects.create(project=project, tenant=tenant)
+        TenantUser.objects.create(tenant=tenant, user=user2)
+
+        item1  = Item.objects.create(**self.item)
+        item2  = Item.objects.create(**self.item)
+
+        ItemRelation.objects.create(parent=item1, child=item2, status='a')
+        ItemRelation.objects.create(parent=item1, child=item2, status='b')
+
+        # ---
+
+        with self.assertNumQueries(3):
+            item = Item.objects.filter(
+                id=item2.id
+            ).select_related(
+                'project',
+                'tenant',
+            ).prefetch_related(
+                'parents__parent',
+            ).first()
+
+        with self.assertNumQueries(0):
+            serialized_data = ItemSerializer.from_orm(item).dict()
+
+        # ---
+
+        with self.assertNumQueries(1):
+            item = Item.objects.get(id=item2.id)
+
+        with self.assertNumQueries(5):
+            serialized_data = ItemSerializer.from_orm(item).dict()
+
+        print('----------')
+        print(serialized_data)
+
+        # --
+
+        items = Item.objects.filter(
+            id=item2.id
+        ).select_related(
+            'project',
+            'tenant',
+        ).prefetch_related(
+            'parents__parent',
         )
 
-        self.assertEqual(
-            display_data.title,
-            self.a_content['title']
-        )
+        serialized_data = ItemSerializer.from_orm(items, many=True)
 
-        display_data = serializer.get_display_content(
-            language=self.b_code,
-            default_language=self.a_code
-        )
-
-        self.assertEqual(
-            display_data.title,
-            self.b_content['title']
-        )
+        print('----------')
+        print(serialized_data)

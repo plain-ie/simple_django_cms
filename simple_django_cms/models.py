@@ -135,3 +135,11 @@ class ItemRelation(models.Model):
     child = models.ForeignKey('Item', related_name='parents', on_delete=models.CASCADE)
     parent = models.ForeignKey('Item', related_name='children', on_delete=models.CASCADE)
     status = models.CharField(max_length=255, db_index=True)
+
+
+# class ItemSnapShot(models.Model):
+#     snapshot_before = models.JSONField(default=dict)
+#     user_id = models.CharField()
+#     item_id = models.CharField()
+#     action = models.CharField()
+#     created_at = models.DateTimeField(auto_now_add=True)

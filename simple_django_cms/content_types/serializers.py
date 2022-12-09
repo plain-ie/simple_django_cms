@@ -4,11 +4,18 @@ from typing import List, Optional, Union
 from django.shortcuts import reverse
 
 from djantic import ModelSchema
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from .. import constants
 from ..conf import settings
 from ..models import Item, Project, Tenant, ItemRelation
+
+
+# --
+#
+# Display data output
+#
+# --
 
 
 class DisplayDataSerializer(BaseModel):
@@ -22,52 +29,14 @@ class DisplayDataSerializer(BaseModel):
     title: str
 
 
-class ProjectSerializer(ModelSchema):
-
-    class Config:
-        model = Project
-
-
-class TenantSerializer(ModelSchema):
-
-    class Config:
-        model = Tenant
+# --
+#
+# Mixins
+#
+# --
 
 
-class ItemRelationSerializer(ModelSchema):
-
-    class Config:
-        model = ItemRelation
-
-
-class TranslatableContentSerializer(BaseModel):
-
-    language: str
-    title: str
-    slug: str
-    content: Union[str, None]
-
-
-class DataSerializer(BaseModel):
-
-    translatable_contents: Optional[List[TranslatableContentSerializer]]
-
-
-class ItemSerializer(ModelSchema):
-
-    class Config:
-        model = Item
-
-    data: Union[DataSerializer, None]
-
-    project: ProjectSerializer
-    tenant: Union[TenantSerializer, None]
-
-    parents: Optional[List[ItemRelationSerializer]]
-
-    published_at: Union[datetime, None]
-    created_at: Union[datetime, None]
-    updated_at: Union[datetime, None]
+class ItemSerializerMixin:
 
     def get_content_type(self, language, default_language):
         return self.content_type
@@ -135,3 +104,158 @@ class ItemSerializer(ModelSchema):
         }
 
         return DisplayDataSerializer(**data)
+
+
+# --
+#
+# Serializer bases
+#
+# --
+
+
+class BaseItemSerializer(ModelSchema):
+
+    class Config:
+        model = Item
+
+
+# --
+#
+# Relations
+#
+# --
+
+
+class RelatedItemSerializer(ItemSerializerMixin, ModelSchema):
+
+    class Config:
+        model = Item
+        exclude = [
+            'project',
+            'tenant',
+            'parents',
+            'children',
+        ]
+
+
+class ItemRelationParentSerializer(ModelSchema):
+
+    parent: RelatedItemSerializer
+    status: str
+
+    class Config:
+        model = ItemRelation
+        exclude = [
+            'child',
+            'id',
+        ]
+
+
+# --
+#
+# Item Foreign keys
+#
+# --
+
+
+class ItemProjectSerializer(ModelSchema):
+
+    class Config:
+        model = Project
+        exclude = [
+            'items',
+            'tenants',
+            'users',
+        ]
+
+    id: int
+    name: Optional[str]
+
+
+class ItemTenantSerializer(ModelSchema):
+
+    class Config:
+        model = Tenant
+        exclude = [
+            'children',
+            'items',
+            'parent',
+            'projects',
+            'users',
+        ]
+
+    id: int
+    name: Optional[str]
+
+
+# --
+#
+# Translatable content
+#
+# --
+
+
+class TranslatableContentSerializer(BaseModel):
+
+    language: str
+    title: str
+    slug: str
+    content: Union[str, None]
+
+
+# --
+#
+# Item data
+#
+# --
+
+
+class DataSerializer(BaseModel):
+
+    translatable_contents: Optional[List[TranslatableContentSerializer]]
+
+
+# --
+#
+# Item for displaying data
+#
+# --
+
+
+class ItemSerializer(ItemSerializerMixin, ModelSchema):
+
+    class Config:
+        model = Item
+        exclude = [
+            'children',
+        ]
+
+    data: Union[DataSerializer, None]
+
+    project: ItemProjectSerializer
+    tenant: Union[ItemTenantSerializer, None]
+
+    parents: Optional[List[ItemRelationParentSerializer]]
+    relations: Optional[dict]
+
+    published_at: Union[datetime, None]
+    created_at: Union[datetime, None]
+    updated_at: Union[datetime, None]
+
+    # --
+    # Transform parents to relations dict
+
+    @validator('relations', check_fields=False)
+    def validate_relations(cls, value, **kwargs):
+
+        relations = kwargs.get('values', {}).get('parents', [])
+        data = {}
+
+        for relation in relations:
+
+            if relation.status not in data.keys():
+                data[relation.status] = []
+
+            data[relation.status].append(relation.parent)
+
+        return data
