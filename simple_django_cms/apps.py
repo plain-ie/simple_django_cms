@@ -11,6 +11,15 @@ class SimpleDjangoCmsConfig(AppConfig):
         from .conf import settings
 
         # ---------------------------------------------------------------------
+        # Set file handling backend
+        # ---------------------------------------------------------------------
+
+        from .extensions.file_handling.local import LocalFileStorageBackend
+
+        settings._FILE_HANDLING_BACKEND = LocalFileStorageBackend()
+
+
+        # ---------------------------------------------------------------------
         # Set content type registry
         # ---------------------------------------------------------------------
 
@@ -29,6 +38,7 @@ class SimpleDjangoCmsConfig(AppConfig):
         settings._CONTENT_TYPE_REGISTRY.register(NewsContentType())
         settings._CONTENT_TYPE_REGISTRY.register(RedirectContentType())
         settings._CONTENT_TYPE_REGISTRY.register(TopicContentType())
+
 
         # ---------------------------------------------------------------------
         # Set markdown widget registry
@@ -59,6 +69,7 @@ class SimpleDjangoCmsConfig(AppConfig):
         settings._MARKDOWN_WIDGET_REGISTRY.register(OrderedListElement)
         settings._MARKDOWN_WIDGET_REGISTRY.register(Paragraph)
         settings._MARKDOWN_WIDGET_REGISTRY.register(SimpleLink)
+
 
         # ---------------------------------------------------------------------
         # Set translations registry

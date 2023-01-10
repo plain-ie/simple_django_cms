@@ -13,9 +13,6 @@ class Settings:
 
     APP_NAME = SimpleDjangoCmsConfig.name
 
-    def __init__(self):
-        self.FILE_HANDLING_BACKEND  # Initiate backend with app start
-
     # --
 
     @property
@@ -79,18 +76,7 @@ class Settings:
     # --
 
     @property
-    def FILE_HANDLING_BACKEND_CLASS(self):
-        return getattr(
-            dj_settings,
-            'FILE_HANDLING_BACKEND_CLASS',
-            f'{self.APP_NAME}.file_handling.local.LocalFileStorageBackend'
-        )
-
-    @property
     def FILE_HANDLING_BACKEND(self):
-        if self._FILE_HANDLING_BACKEND is not None:
-            return self._FILE_HANDLING_BACKEND
-        self._FILE_HANDLING_BACKEND = load(self.FILE_HANDLING_BACKEND_CLASS)()
         return self._FILE_HANDLING_BACKEND
 
     # --
