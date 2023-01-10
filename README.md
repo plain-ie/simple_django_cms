@@ -8,7 +8,8 @@ Lets make plain.ie simple
 Configuration is done in `settings.py` file
 
 `DEFAULT_LANGUAGE = 'en'`
-`LANGUAGES = [["en", "English", "fr": "French"]]`
+
+`LANGUAGES = [["en", "English", "ga": "Gaeilge"]]`
 
 
 ## TODO
