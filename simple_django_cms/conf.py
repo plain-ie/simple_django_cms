@@ -73,34 +73,8 @@ class Settings:
     # --
 
     @property
-    def CONTENT_TYPE_LIST(self):
-        root = f'{self.APP_NAME}.content_types'
-        return getattr(
-            dj_settings,
-            'CONTENT_TYPE_LIST',
-            [
-                f'{root}.flat_pages.content_type.FlatPageContentType',
-                f'{root}.images.content_type.ImageContentType',
-                f'{root}.news.content_type.NewsContentType',
-                f'{root}.redirects.content_type.RedirectContentType',
-                f'{root}.topics.content_type.TopicContentType',
-            ]
-        )
-
-    @property
     def CONTENT_TYPE_REGISTRY(self):
-        if self._CONTENT_TYPE_REGISTRY is not None:
-            return self._CONTENT_TYPE_REGISTRY
-        self._CONTENT_TYPE_REGISTRY = load(self.CONTENT_TYPE_REGISTRY_CLASS)()
         return self._CONTENT_TYPE_REGISTRY
-
-    @property
-    def CONTENT_TYPE_REGISTRY_CLASS(self):
-        return getattr(
-            dj_settings,
-            'CONTENT_TYPE_REGISTRY_CLASS',
-            f'{self.APP_NAME}.content_types.registry.ContentTypeRegistry'
-        )
 
     # --
 
@@ -122,63 +96,13 @@ class Settings:
     # --
 
     @property
-    def MARKDOWN_WIDGETS_LIST(self):
-        root = f'{self.APP_NAME}.markdown.widgets'
-        return getattr(
-            dj_settings,
-            'MARKDOWN_WIDGETS_LIST',
-            [
-                f'{root}.HeadingH1',
-                f'{root}.HeadingH2',
-                f'{root}.HeadingH3',
-                f'{root}.HeadingH4',
-                f'{root}.HorizontalRule',
-                f'{root}.Image',
-                f'{root}.UnorderedListElement',
-                f'{root}.OrderedListElement',
-                f'{root}.Paragraph',
-            ]
-        )
-
-    @property
-    def MARKDOWN_WIDGETS_LIST_EXTENSION(self):
-        return getattr(
-            dj_settings,
-            'MARKDOWN_WIDGETS_LIST_EXTENSION',
-            [],
-        )
-
-    @property
     def MARKDOWN_WIDGET_REGISTRY(self):
-        if self._MARKDOWN_WIDGET_REGISTRY is not None:
-            return self._MARKDOWN_WIDGET_REGISTRY
-        self._MARKDOWN_WIDGET_REGISTRY = load(
-            self.MARKDOWN_WIDGET_REGISTRY_CLASS)()
         return self._MARKDOWN_WIDGET_REGISTRY
-
-    @property
-    def MARKDOWN_WIDGET_REGISTRY_CLASS(self):
-        return getattr(
-            dj_settings,
-            'MARKDOWN_WIDGET_REGISTRY_CLASS'
-            f'{self.APP_NAME}.markdown.registry.MarkdownWidgetRegistry',
-        )
 
     # --
 
     @property
-    def TRANSLATION_REGISTRY_CLASS(self):
-        return getattr(
-            dj_settings,
-            'TRANSLATION_REGISTRY_CLASS',
-            f'{self.APP_NAME}.translate.registry.TransaltionRegistry'
-        )
-
-    @property
     def TRANSLATION_REGISTRY(self):
-        if self._TRANSLATION_REGISTRY is not None:
-            return self._TRANSLATION_REGISTRY
-        self._TRANSLATION_REGISTRY = load(self.TRANSLATION_REGISTRY_CLASS)()
         return self._TRANSLATION_REGISTRY
 
     # --
