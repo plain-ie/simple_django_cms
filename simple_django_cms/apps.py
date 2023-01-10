@@ -47,6 +47,7 @@ class SimpleDjangoCmsConfig(AppConfig):
         from .extensions.markdown.widgets import UnorderedListElement
         from .extensions.markdown.widgets import OrderedListElement
         from .extensions.markdown.widgets import Paragraph
+        from .extensions.markdown.widgets import SimpleLink
 
         settings._MARKDOWN_WIDGET_REGISTRY.register(HeadingH1)
         settings._MARKDOWN_WIDGET_REGISTRY.register(HeadingH2)
@@ -57,6 +58,7 @@ class SimpleDjangoCmsConfig(AppConfig):
         settings._MARKDOWN_WIDGET_REGISTRY.register(UnorderedListElement)
         settings._MARKDOWN_WIDGET_REGISTRY.register(OrderedListElement)
         settings._MARKDOWN_WIDGET_REGISTRY.register(Paragraph)
+        settings._MARKDOWN_WIDGET_REGISTRY.register(SimpleLink)
 
         # ---------------------------------------------------------------------
         # Set translations registry
