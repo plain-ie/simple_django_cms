@@ -1,6 +1,6 @@
 from django.shortcuts import reverse
 
-from .... import constants
+from ... import constants
 
 from ..serializers import ItemSerializer
 

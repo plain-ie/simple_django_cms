@@ -1,6 +1,9 @@
-import re
-
-from django.core.signing import Signer, TimestampSigner, BadSignature, SignatureExpired
+from django.core.signing import (
+    BadSignature,
+    Signer,
+    SignatureExpired,
+    TimestampSigner,
+)
 
 
 def unsign_object(data, salt='', max_age=None):

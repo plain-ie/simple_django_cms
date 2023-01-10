@@ -5,7 +5,7 @@ from django.forms.formsets import DEFAULT_MIN_NUM, DEFAULT_MAX_NUM
 from django.forms.renderers import get_default_renderer
 from django.utils.text import slugify
 
-from ... import constants
+from .. import constants
 
 from .fields import ItemRelationParentField
 

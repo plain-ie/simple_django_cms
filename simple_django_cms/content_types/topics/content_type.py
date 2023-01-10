@@ -1,4 +1,4 @@
-from .... import constants
+from ... import constants
 
 from ..content_type import BaseContentType
 

@@ -6,9 +6,9 @@ from django.shortcuts import reverse
 from djantic import ModelSchema
 from pydantic import BaseModel, validator
 
-from ... import constants
-from ...conf import settings
-from ...models import Item, Project, Tenant, ItemRelation
+from .. import constants
+from ..conf import settings
+from ..models import Item, Project, Tenant, ItemRelation
 
 
 # --

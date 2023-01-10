@@ -1,6 +1,7 @@
-import re
-
-from django.core.signing import Signer, TimestampSigner
+from django.core.signing import (
+    Signer,
+    TimestampSigner
+)
 
 
 def sign_object(data, salt='', max_age=None):

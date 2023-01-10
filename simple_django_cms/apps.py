@@ -8,13 +8,17 @@ class SimpleDjangoCmsConfig(AppConfig):
 
     def ready(self):
 
+        import os
+
+        from django.conf import settings as dj_settings
+
         from .conf import settings
 
         # ---------------------------------------------------------------------
         # Set file handling backend
         # ---------------------------------------------------------------------
 
-        from .extensions.file_handling.local import LocalFileStorageBackend
+        from .file_handling.local import LocalFileStorageBackend
 
         settings._FILE_HANDLING_BACKEND = LocalFileStorageBackend()
 
@@ -23,56 +27,67 @@ class SimpleDjangoCmsConfig(AppConfig):
         # Set content type registry
         # ---------------------------------------------------------------------
 
-        from .extensions.content_types.registry import ContentTypeRegistry
+        from .content_types.registry import ContentTypeRegistry
 
         settings._CONTENT_TYPE_REGISTRY = ContentTypeRegistry()
 
-        from .extensions.content_types.flat_pages.content_type import FlatPageContentType
-        from .extensions.content_types.images.content_type import ImageContentType
-        from .extensions.content_types.news.content_type import NewsContentType
-        from .extensions.content_types.redirects.content_type import RedirectContentType
-        from .extensions.content_types.topics.content_type import TopicContentType
+        from .content_types.flat_pages.content_type import FlatPageContentType
+        from .content_types.images.content_type import ImageContentType
+        from .content_types.news.content_type import NewsContentType
+        from .content_types.redirects.content_type import RedirectContentType
+        from .content_types.topics.content_type import TopicContentType
 
-        settings._CONTENT_TYPE_REGISTRY.register(FlatPageContentType())
-        settings._CONTENT_TYPE_REGISTRY.register(ImageContentType())
-        settings._CONTENT_TYPE_REGISTRY.register(NewsContentType())
-        settings._CONTENT_TYPE_REGISTRY.register(RedirectContentType())
-        settings._CONTENT_TYPE_REGISTRY.register(TopicContentType())
+        settings.CONTENT_TYPE_REGISTRY.register(FlatPageContentType())
+        settings.CONTENT_TYPE_REGISTRY.register(ImageContentType())
+        settings.CONTENT_TYPE_REGISTRY.register(NewsContentType())
+        settings.CONTENT_TYPE_REGISTRY.register(RedirectContentType())
+        settings.CONTENT_TYPE_REGISTRY.register(TopicContentType())
 
 
         # ---------------------------------------------------------------------
         # Set markdown widget registry
         # ---------------------------------------------------------------------
 
-        from .extensions.markdown.registry import MarkdownWidgetRegistry
+        from .markdown.registry import MarkdownWidgetRegistry
 
         settings._MARKDOWN_WIDGET_REGISTRY = MarkdownWidgetRegistry()
 
-        from .extensions.markdown.widgets import HeadingH1
-        from .extensions.markdown.widgets import HeadingH2
-        from .extensions.markdown.widgets import HeadingH3
-        from .extensions.markdown.widgets import HeadingH4
-        from .extensions.markdown.widgets import HorizontalRule
-        from .extensions.markdown.widgets import Image
-        from .extensions.markdown.widgets import UnorderedListElement
-        from .extensions.markdown.widgets import OrderedListElement
-        from .extensions.markdown.widgets import Paragraph
-        from .extensions.markdown.widgets import SimpleLink
+        from .markdown.widgets import HeadingH1
+        from .markdown.widgets import HeadingH2
+        from .markdown.widgets import HeadingH3
+        from .markdown.widgets import HeadingH4
+        from .markdown.widgets import HorizontalRule
+        from .markdown.widgets import Image
+        from .markdown.widgets import UnorderedListElement
+        from .markdown.widgets import OrderedListElement
+        from .markdown.widgets import Paragraph
+        from .markdown.widgets import SimpleLink
 
-        settings._MARKDOWN_WIDGET_REGISTRY.register(HeadingH1)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(HeadingH2)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(HeadingH3)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(HeadingH4)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(HorizontalRule)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(Image)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(UnorderedListElement)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(OrderedListElement)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(Paragraph)
-        settings._MARKDOWN_WIDGET_REGISTRY.register(SimpleLink)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(HeadingH1)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(HeadingH2)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(HeadingH3)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(HeadingH4)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(HorizontalRule)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(Image)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(UnorderedListElement)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(OrderedListElement)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(Paragraph)
+        settings.MARKDOWN_WIDGET_REGISTRY.register(SimpleLink)
 
 
         # ---------------------------------------------------------------------
         # Set translations registry
         # ---------------------------------------------------------------------
 
-        settings._TRANSLATION_REGISTRY = None
+        from .translate.registry import TransaltionRegistry
+
+        settings._TRANSLATION_REGISTRY = TransaltionRegistry()
+
+
+        # ---------------------------------------------------------------------
+        # Get nltk, set it up
+        # ---------------------------------------------------------------------
+
+        import nltk
+        nltk.download('punkt', download_dir='nltk')
+        nltk.data.path.append(os.path.join(dj_settings.BASE_DIR, 'nltk'))

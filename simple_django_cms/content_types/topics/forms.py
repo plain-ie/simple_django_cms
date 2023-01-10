@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import widgets
 
-from .... import constants
+from ... import constants
 
 from ..fields import ItemRelationParentField
 from ..forms import TranslatableContentForm, ItemRelationForm

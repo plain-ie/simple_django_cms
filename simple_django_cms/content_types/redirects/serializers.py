@@ -2,7 +2,7 @@ from django.shortcuts import reverse
 
 from pydantic import BaseModel
 
-from .... import constants
+from ... import constants
 
 from ..serializers import ItemSerializer
 

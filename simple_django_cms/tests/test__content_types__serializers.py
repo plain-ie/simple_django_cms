@@ -81,9 +81,6 @@ class ContentTypesFormsTestCase(TestCase):
         with self.assertNumQueries(5):
             serialized_data = ItemSerializer.from_orm(item).dict()
 
-        print('----------')
-        print(serialized_data)
-
         # --
 
         items = Item.objects.filter(
@@ -96,6 +93,3 @@ class ContentTypesFormsTestCase(TestCase):
         )
 
         serialized_data = ItemSerializer.from_orm(items, many=True)
-
-        print('----------')
-        print(serialized_data)

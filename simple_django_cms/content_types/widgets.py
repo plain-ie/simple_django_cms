@@ -1,6 +1,6 @@
 from django.forms.widgets import Input
 
-from ...conf import settings
+from ..conf import settings
 
 
 class FileURLDisplayWidget(Input):

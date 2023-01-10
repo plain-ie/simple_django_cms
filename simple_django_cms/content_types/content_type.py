@@ -3,13 +3,13 @@ import datetime
 from django.forms import formset_factory
 from django.shortcuts import render, redirect, reverse
 
-from ... import constants
-from ...conf import settings
-from ...clients.internal.files import FileClient
-from ...clients.internal.items import ItemQuerySetClient
-from ...clients.internal.projects import ProjectQuerySetClient
-from ...clients.internal.tenants import TenantQuerySetClient
-from ...platform.admin.utils import (
+from .. import constants
+from ..conf import settings
+from ..clients.internal.files import FileClient
+from ..clients.internal.items import ItemQuerySetClient
+from ..clients.internal.projects import ProjectQuerySetClient
+from ..clients.internal.tenants import TenantQuerySetClient
+from ..platform.admin.utils import (
     create_message,
     get_item_admin_url,
     get_management_link_create_item_previous,
