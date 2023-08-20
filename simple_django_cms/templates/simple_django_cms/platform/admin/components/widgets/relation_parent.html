@@ -1,5 +1,3 @@
-{% load simple_django_cms_tags %}
-
 <div class="form-group">
     <div class="input-group">
         <input type="text" value="{{ widget.value }}" id="{{ widget.name }}" class="form-control input-lg" disabled />
@@ -10,9 +8,4 @@
             </a>
         </span>
     </div>
-    {% if FIELD.help_text %}
-        <p class="help-block">
-            {{ FIELD.help_text|safe }}
-        </p>
-    {% endif %}
 </div>

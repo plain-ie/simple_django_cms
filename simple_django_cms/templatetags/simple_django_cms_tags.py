@@ -1,3 +1,5 @@
+import json
+
 from django import template
 
 from .. import constants
@@ -9,8 +11,8 @@ register = template.Library()
 
 
 @register.simple_tag
-def setting(value):
-    return getattr(settings, value, None)
+def constant(name):
+    return getattr(constants, name, None)
 
 
 @register.simple_tag
@@ -19,8 +21,13 @@ def define(value):
 
 
 @register.simple_tag
-def constant(name):
-    return getattr(constants, name, None)
+def json_load(value):
+    return json.load(value)
+
+
+@register.simple_tag
+def setting(value):
+    return getattr(settings, value, None)
 
 
 @register.filter(name='extend_field_css_classes')

@@ -1,12 +1,12 @@
 from ... import constants
 
 from ..content_type import BaseContentType
-from ..topics.utils import get_topics_relation_formset
 
 from .forms import (
     NewsItemForm,
     NewsTranslatableContentForm,
 )
+from .utils import get_topics_relation_formset
 
 
 class NewsContentType(BaseContentType):
